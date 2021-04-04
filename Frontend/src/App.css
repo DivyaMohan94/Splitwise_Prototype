@@ -1,0 +1,303 @@
+html { font-size: 16px; font-family: sans-serif;}
+.form-heading { color:#fff; font-size:23px;}
+.panel h2{ color:#444444; font-size:18px; margin:0 0 8px 0;}
+.panel p { color:#777777; font-size:14px; margin-bottom:30px; line-height:24px;}
+.login-form .form-control {
+  background: #f7f7f7 none repeat scroll 0 0;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  font-size: 14px;
+  height: 50px;
+  line-height: 50px;
+}
+
+.color-teal {
+  color:#1CC29F;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.landing-icons{
+ display: flex;
+ fill: currentColor;
+}
+
+.landing-icon-1{
+ color:#1CC29F;
+ width:75px;
+ padding:10px;
+}
+
+.landing-icon-2{
+  color:#8656cd;
+  width:75px;
+  padding:10px;
+}
+
+.landing-icon-3{
+color:#a6002f;
+width:75px;
+padding:10px;
+}
+
+.landing-icon-4{
+color:#ccc;
+width:75px;
+padding:10px;
+}
+
+.landing-icon-left {
+  color:#69d4bd;
+  fill: currentColor;
+}
+
+.landing-center-container {
+margin-top: 50px;
+}
+
+.marginTop100 {
+  margin-top:100px;
+}
+
+.dashboard-section {
+  box-shadow: 0px 0px 25px 1px #ccc;
+  margin-right: 15px;
+  z-index: 10;
+  min-height: 95vh;
+}
+
+
+.dashboard-section-nav {
+  max-width: 10% !important;
+}
+
+.main-div {
+  background: #ffffff none repeat scroll 0 0;
+  border-radius: 2px;
+  margin: 10px auto 30px;
+  max-width: 38%;
+  padding: 50px 70px 70px 71px;
+  border: 2px solid black;
+}
+
+.login-form .form-group {
+  margin-bottom:10px;
+}
+.login-form{ text-align:center;}
+.forgot a {
+  color: #777777;
+  font-size: 14px;
+  text-decoration: underline;
+}
+.title-card {
+  margin: 10px;
+}
+
+ .btn.btn-primary:active {
+  background: #f16430 none repeat scroll 0 0 !important;
+  border-color: #f16430 !important;
+  color: #ffffff;
+}
+ .btn.btn-primary:focus {
+  background: #f16430 none repeat scroll 0 0;
+  border-color: #f16430;
+  color: #ffffff;
+}
+
+.btn.btn-primary.dropdown-toggle:active {
+  background: #f16430 none repeat scroll 0 0 !important;
+  border-color: #f16430 !important;
+  color: #ffffff;
+}
+.btn.btn-primary.dropdown-toggle:focus {
+  background: #f16430 none repeat scroll 0 0;
+  border-color: #f16430;
+  color: #ffffff;
+}
+
+.forgot {
+  text-align: left; margin-bottom:30px;
+}
+.botto-text {
+  color: #ffffff;
+  font-size: 14px;
+  margin: auto;
+}
+.back { text-align: left; margin-top:10px;}
+.back a {color: #444444; font-size: 13px;text-decoration: none;}
+
+.errorMsg{
+  color : red;
+  font-size: 17px;
+  margin: 15px;
+}
+
+/* Landing Page CSS */
+.landingcontainer {
+  max-width: 1350px;
+  display:flex;
+  justify-content: space-between;
+  flex-direction: row;
+  margin-top: 15px;
+  align-items:flex-start;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.email-input{
+  height: 30px !important;
+  border-radius: 1px  !important;
+  border: 1px solid  !important;
+}
+
+.login-img {
+  display:flex;
+  justify-content: flex-end;
+}
+
+.create-group-image {
+  display:flex;
+  justify-content: flex-end;
+}
+
+.signup-button {
+  margin-left: 10px;
+}
+
+.main{
+  height: 1000px;
+  background-image: url(../src/components/Images/facets.png);
+  justify-content: center;
+}
+
+.font-sans {
+  font-family: 'sans-serif';
+  font-size: x-large;
+  font-weight: bold;
+}
+
+.logoSpan{
+  width: 50px;
+  height: 50px;
+  display: block;
+}
+
+.landingHeaderDiv{
+  margin: 10px;
+  text-align: center;
+  display:flex;
+  justify-content: center;
+}
+
+.signupbutton{
+margin-left: auto;
+text-align: center;
+display: flex;
+}
+
+a:link, a:visited {
+  background-color: white;
+  color: #1cc29f;
+  padding: 10px 0px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+  font-family: 'Lato';
+}
+a:hover{
+  color: #1cc29f;
+}
+.btn.btn-info{
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-weight: 600;
+  font-size: 15px;
+  background-color: #1cc29f;
+}
+
+
+
+
+.signupContainer{
+  margin-top: 100px;
+}
+
+.form{
+  width: 500px;
+ height: 450px;
+}
+
+.form-control{
+  height: 25px;
+  font-size: 15px;
+}
+
+.loginmain{
+    background-color: #1cc29f;
+    justify-content: center;
+}
+
+.logincontainer{
+  max-width: 1100px;
+  display:flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items:center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.loginImage{
+  width: 25px;
+  height: 25px;
+  display: block;
+}
+
+.loginfont {
+  font-family: 'sans-serif';
+  font-size: large;
+  font-weight: bold;
+  color: white;
+}
+
+.row{
+  font-family: 'sans-serif';
+  /* margin: 10px; */
+}
+
+.form{
+  width: 600px;
+  height: 400px;
+}
+
+.profile{
+  margin-top: 30px;
+  display: block;
+}
+
+.form-label{
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.form-control{
+  height: 30px;
+}
+
+.emailButton{
+  background-color: #1cc29f;
+}
+
+.circle{
+  border-radius: 50%;
+}
+
+.profile-email{
+  display: flex;
+  flex-direction: column;
+}

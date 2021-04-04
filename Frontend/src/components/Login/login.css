@@ -1,0 +1,44 @@
+
+.form-label{
+    font-size: 17px;
+    font-weight: 500;
+  }
+  
+  .formControl{
+      height:35px;
+  }
+
+  .btn.btn-info{
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    background-color: #FF652F;
+  }
+
+  .btn.btn-primary{
+    background-color: #FF652F;
+    border-color: #777574;
+  }
+
+  .btn.btn-primary:hover {
+    background-color:  #c73b08;
+    color: white;
+  }
+
+  .btn.btn-info:hover {
+    background-color:  #c73b08;
+    color: white;
+  }
+
+  .btn.btn-primary:active {
+    background-color:  #FF652F;
+    color: white;
+  }
+
+  .btn.btn-info:active {
+    background-color:  #FF652F;
+    color: white;
+  }
