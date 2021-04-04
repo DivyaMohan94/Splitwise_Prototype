@@ -228,7 +228,7 @@ class SettleUp extends Component {
                       <Form.Group as={Col} controlId="amount">
                         <Row>
                           <Col md="auto">
-                            <Form.Label column>USD</Form.Label>
+                            <Form.Label column>{localStorage.getItem('currency')}</Form.Label>
                           </Col>
                           <Col md="auto" style={{ paddingRight: "0px" }}>
                             <Form.Control

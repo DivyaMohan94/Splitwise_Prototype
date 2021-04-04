@@ -261,7 +261,7 @@ class DashboardContainer extends Component {
   render() {
     const youAreOwedString = "You are not owed anything";
     const youOweString = "You do not owe anything";
-    const currencyType = this.props.userDetails.currency;
+    const currencyType = localStorage.getItem('currency');
     console.log(`currency type is: ${currencyType}`);
     return (
       <Container>

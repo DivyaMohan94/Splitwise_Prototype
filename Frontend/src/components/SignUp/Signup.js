@@ -33,12 +33,15 @@ class SignUp extends Component {
       userID: -1,
       isDirectNeeded: false,
       token: "",
+      currency: "",
+      isLoginClicked: false,
     };
     this.onNameChange = this.onNameChange.bind(this);
     this.onEmailChange = this.onEmailChange.bind(this);
     this.onPasswordChange = this.onPasswordChange.bind(this);
     this.onSignup = this.onSignup.bind(this);
     this.validateLogin = this.validateLogin.bind(this);
+    this.onLoginClicked = this.onLoginClicked.bind(this);
   }
 
   onNameChange(e) {
@@ -82,6 +85,10 @@ class SignUp extends Component {
             this.setState({
               isDirectNeeded: true,
               token: response.data.token,
+              emailID: response.data.payload.emailID,
+              name: response.data.payload.userName,
+              currency: response.data.payload.currency,
+              userID: response.data.payload._id,
             });
             // eslint-disable-next-line react/destructuring-assignment
             this.props.signup(response.data.payload);
@@ -94,7 +101,7 @@ class SignUp extends Component {
         })
         .catch((error) => {
           const emailErr = [];
-          emailErr.push(`${this.state.emailID} already belongs to another account. If ${this.state.emailID} is your email address you can reset your password from our password reset page.`);
+          emailErr.push(`${this.state.emailID} belongs to another account. Retry signing up with another Email ID`);
           this.setState({
             validationErr: emailErr,
           });
@@ -135,19 +142,30 @@ class SignUp extends Component {
     return isValid;
   }
 
+  onLoginClicked() {
+    console.log('inside login clicked');
+    this.setState({
+      isLoginClicked: true,
+    });
+  }
+
   render() {
     console.log("render called");
     console.log(this.state.validationErr);
     let redirectVar = null;
     let errMsg = "";
 
+    if (this.state.isLoginClicked === true) {
+      redirectVar = <Redirect to="/login" />;
+    }
+
     if (this.state.token.length > 0 && this.state.isDirectNeeded === true) {
       localStorage.setItem("token", this.state.token);
 
-      localStorage.setItem("userID", this.props.userID);
-      localStorage.setItem("username", this.props.userName);
-      localStorage.setItem("emailID", this.props.emailID);
-      localStorage.setItem("currency", this.props.currency);
+      localStorage.setItem("userID", this.state.userID);
+      localStorage.setItem("username", this.state.name);
+      localStorage.setItem("emailID", this.state.emailID);
+      localStorage.setItem("currency", this.state.currency);
 
       redirectVar = <Redirect to="/dashboard" />;
     }
@@ -157,56 +175,73 @@ class SignUp extends Component {
     }
 
     return (
-      <Container className="signupContainer">
-        {redirectVar}
-        <Row>
-          <Col className="col-md-12">
-            {errMsg && (
-            <Alert transition={false} variant="danger">
-              <Alert.Heading>The following error(s) occured:</Alert.Heading>
-              {errMsg}
-            </Alert>
-            )}
-          </Col>
-        </Row>
-        <Row>
-          <Col xs lg="3">
-            <img
-              src="https://assets.splitwise.com/assets/core/logo-square-65a6124237868b1d2ce2f5db2ab0b7c777e2348b797626816400534116ae22d7.svg"
-              alt="SplitWise"
-              width="200 "
-              height="200"
-            />
-          </Col>
-          <Col>
-            <Form className="form">
-              <Form.Label style={{ color: "#999999" }}>INTRODUCE YOURSELF</Form.Label>
-              <Form.Group controlId="formBasicEmail">
-                <Form.Label>Hi there! My name is</Form.Label>
-                <Form.Control type="text" className="form-control" onChange={this.onNameChange} required />
-              </Form.Group>
+      <div>
+        <div className="loginmain">
+          <div className="logincontainer">
+            <span>
+              <img
+                src="https://assets.splitwise.com/assets/core/logo-square-65a6124237868b1d2ce2f5db2ab0b7c777e2348b797626816400534116ae22d7.svg"
+                alt="SplitWise"
+                className="loginImage"
+              />
+            </span>
+            <div className="loginfont landingHeaderDiv">Splitwise</div>
+            <div className="signupbutton">
+              <Button variant="primary" onClick={this.onLoginClicked}>Login</Button>
+            </div>
+          </div>
+        </div>
+        <Container className="signupContainer">
+          {redirectVar}
+          <Row>
+            <Col className="col-md-12">
+              {errMsg && (
+              <Alert transition={false} variant="danger">
+                <Alert.Heading>The following error(s) occured:</Alert.Heading>
+                {errMsg}
+              </Alert>
+              )}
+            </Col>
+          </Row>
+          <Row>
+            <Col xs lg="3">
+              <img
+                src="https://assets.splitwise.com/assets/core/logo-square-65a6124237868b1d2ce2f5db2ab0b7c777e2348b797626816400534116ae22d7.svg"
+                alt="SplitWise"
+                width="200 "
+                height="200"
+              />
+            </Col>
+            <Col>
+              <Form className="form">
+                <Form.Label style={{ color: "#999999" }}>INTRODUCE YOURSELF</Form.Label>
+                <Form.Group controlId="formBasicEmail">
+                  <Form.Label>Hi there! My name is</Form.Label>
+                  <Form.Control type="text" className="form-control" onChange={this.onNameChange} required />
+                </Form.Group>
 
-              <Form.Group controlId="formBasicEmail">
-                <Form.Label>Here's my email address</Form.Label>
-                <Form.Control type="email" className="form-control" onChange={this.onEmailChange} required />
-              </Form.Group>
+                <Form.Group controlId="formBasicEmail">
+                  <Form.Label>Here's my email address</Form.Label>
+                  <Form.Control type="email" className="form-control" onChange={this.onEmailChange} required />
+                </Form.Group>
 
-              <Form.Group controlId="formBasicPassword">
-                <Form.Label>And here's my password</Form.Label>
-                <Form.Control type="password" onChange={this.onPasswordChange} required />
-              </Form.Group>
-              <Button variant="info" type="submit" style={{ backgroundColor: "#FF652F" }} onClick={this.onSignup}>
-                Sign me up!
-              </Button>
-              <Form.Group controlId="formBasicPassword">
-                <Form.Label style={{ marginTop: "40px", color: "#0088cc" }}>By signing up, you accept the Splitwise Terms of Service.</Form.Label>
-              </Form.Group>
-            </Form>
+                <Form.Group controlId="formBasicPassword">
+                  <Form.Label>And here's my password</Form.Label>
+                  <Form.Control type="password" onChange={this.onPasswordChange} required />
+                </Form.Group>
+                <Button variant="info" type="submit" style={{ backgroundColor: "#FF652F" }} onClick={this.onSignup}>
+                  Sign me up!
+                </Button>
+                <Form.Group controlId="formBasicPassword">
+                  <Form.Label style={{ marginTop: "40px", color: "#0088cc" }}>By signing up, you accept the Splitwise Terms of Service.</Form.Label>
+                </Form.Group>
+              </Form>
 
-          </Col>
-        </Row>
+            </Col>
+          </Row>
 
-      </Container>
+        </Container>
+      </div>
     );
   }
 }

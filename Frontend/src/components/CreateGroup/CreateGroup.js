@@ -57,6 +57,7 @@ class CreateGroup extends Component {
     this.saveGroupDetails = this.saveGroupDetails.bind(this);
     this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
     this.handleImageChange = this.handleImageChange.bind(this);
+    this.onDashboardClicked = this.onDashboardClicked.bind(this);
   }
 
   componentDidMount() {
@@ -329,10 +330,15 @@ class CreateGroup extends Component {
     return isValid;
   }
 
+  onDashboardClicked() {
+    this.setState({
+      isDirectNeeded: true,
+    });
+  }
+
   render() {
     // redirect to group page
     console.log("Create group render called");
-    console.log(`my cookie is ${cookie.load("cookie")}`);
     console.log(`map to props ${this.props.userDetails.userName}`);
     let redirectVar = null;
     let errMsg = "";
@@ -392,6 +398,7 @@ class CreateGroup extends Component {
             </span>
             <div className="loginfont landingHeaderDiv">Splitwise</div>
             <div className="signupbutton">
+              <Button variant="primary" onClick={this.onDashboardClicked}>Dashboard</Button>
               <Button variant="primary" onClick={this.handleLogout}>Logout</Button>
             </div>
           </div>

@@ -327,7 +327,7 @@ class Dashboard extends Component {
             <div className="signupbutton">
               <DropdownButton
                 id="dropdown-item-button"
-                title={this.props.userDetails.userName}
+                title={localStorage.getItem('username')}
               >
                 <Dropdown.Item as="button" onClick={this.handleProfile}>
                   Profile

@@ -249,6 +249,8 @@ class Profile extends Component {
             this.setState({
               isDirectNeeded: true,
             });
+            localStorage.setItem('username', this.state.userName);
+            localStorage.setItem('currency', this.state.currency);
           } else if (response.status === 400) {
             console.log("cannot save profile details");
             this.setState({
