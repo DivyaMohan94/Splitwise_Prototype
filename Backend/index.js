@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cors = require('cors');
 const mongoose = require('mongoose');
-// const connection = require('./Routes/Connection');
 const config = require('./Util/config');
 
 // use cors to allow cross origin resource sharing

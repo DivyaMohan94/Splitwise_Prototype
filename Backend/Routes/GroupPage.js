@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require('mongoose');
-const connection = require("./Connection.js");
 const Transactions = require('../Models/TransactionModel');
 const GroupDetails = require('../Models/GroupDetailsModel');
 const Split = require('../Models/Split');
@@ -353,42 +352,42 @@ router.put("/leaveGroup", (req, res) => {
   );
 });
 
-router.put("/changeImage", (req, res) => {
-  connection.getConnection((err, conn) => {
-    if (err) {
-      console.log('Cannot connect to database');
-      console.log(err);
-      throw err;
-    } else {
-      console.log('Connection111 successful');
-      console.log("Inside change image");
-      console.log("Req Body : ", req.body);
-      const { Image } = req.body;
-      const { GroupID } = req.body;
+// router.put("/changeImage", (req, res) => {
+//   connection.getConnection((err, conn) => {
+//     if (err) {
+//       console.log('Cannot connect to database');
+//       console.log(err);
+//       throw err;
+//     } else {
+//       console.log('Connection111 successful');
+//       console.log("Inside change image");
+//       console.log("Req Body : ", req.body);
+//       const { Image } = req.body;
+//       const { GroupID } = req.body;
 
-      const imageUpdate = `UPDATE GroupDetails
-  SET Image = ${mysql.escape(Image)}
-  WHERE GroupID = ${mysql.escape(GroupID)}`;
+//       const imageUpdate = `UPDATE GroupDetails
+//   SET Image = ${mysql.escape(Image)}
+//   WHERE GroupID = ${mysql.escape(GroupID)}`;
 
-      console.log(imageUpdate);
+//       console.log(imageUpdate);
 
-      conn.query(imageUpdate, (error, data) => {
-        if (error) {
-          res.writeHead(400, {
-            "content-type": "text/plain",
-          });
-          res.end("Sql error");
-        } else {
-          console.log(data);
-          res.writeHead(200, {
-            "Content-type": "application/json",
-          });
-          res.end(JSON.stringify(data));
-          conn.release();
-        }
-      });
-    }
-  });
-});
+//       conn.query(imageUpdate, (error, data) => {
+//         if (error) {
+//           res.writeHead(400, {
+//             "content-type": "text/plain",
+//           });
+//           res.end("Sql error");
+//         } else {
+//           console.log(data);
+//           res.writeHead(200, {
+//             "Content-type": "application/json",
+//           });
+//           res.end(JSON.stringify(data));
+//           conn.release();
+//         }
+//       });
+//     }
+//   });
+// });
 
 module.exports = router;

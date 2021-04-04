@@ -5,7 +5,6 @@ import React, { Component } from "react";
 // eslint-disable-next-line no-unused-vars
 // import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
-import cookie from "react-cookies";
 import { Redirect } from "react-router";
 import "../../App.css";
 import axios from 'axios';
@@ -55,21 +54,19 @@ class Profile extends Component {
     this.onHomeClicked = this.onHomeClicked.bind(this);
     this.onProfileMenu = this.onProfileMenu.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
-    this.onAddEmail = this.onAddEmail.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
     console.log("inside did mount of profile page");
-    console.log(`my cookie is ${cookie.load("cookie")}`);
-    const data = cookie.load("cookie");
+    const data = localStorage.getItem('userID');
     if (data === "" || data === undefined) {
       this.handleLogout();
     } else {
       axios
         .get(`${URL_VAL}/profile`, {
           params: {
-            UserID: data,
+            userID: data,
           },
         })
         .then((response) => {
@@ -78,15 +75,15 @@ class Profile extends Component {
           if (response.status === 200) {
             console.log("inside success");
             this.setState({
-              userName: response.data.UserName,
-              emailID: response.data.Email,
-              phoneNum: response.data.PhoneNum,
-              countryCode: response.data.CountryCode,
-              currency: response.data.Currency,
-              timeZone: response.data.Timezone,
-              language: response.data.Language,
-              image: response.data.Image,
-              password: response.data.Password,
+              userName: response.data.userName,
+              emailID: response.data.emailID,
+              phoneNum: response.data.phoneNum,
+              countryCode: response.data.countryCode,
+              currency: response.data.currency,
+              timeZone: response.data.timeZone,
+              language: response.data.language,
+              image: response.data.image,
+              password: response.data.password,
               imagePreview: undefined,
             });
             // set image
@@ -144,10 +141,10 @@ class Profile extends Component {
     }
   }
 
-  // handle logout to destroy the cookie
+  // handle logout to destroy the local storage
   handleLogout() {
     console.log("logout called");
-    cookie.remove("cookie", { path: "/" });
+    localStorage.clear();
     this.setState({
       isLogout: true,
     });
@@ -221,55 +218,22 @@ class Profile extends Component {
     });
   }
 
-  onAddEmail(e) {
-    const regexEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    const data = {
-      Email: this.state.emailID,
-    };
-    const err = [];
-    if (this.state.emailID.match(regexEmail)) {
-    // set the with credentials to true
-      axios.defaults.withCredentials = true;
-      // make a post request with the user data
-      axios
-        .post(`${URL_VAL}/profile/Email`, data)
-        .then((response) => {
-          console.log("Status Code : ", response.status);
-          console.log("Status Code : ", response.data[0]);
-          if (response.status === 400) {
-            console.log("inside user already exists error");
-            this.setState({
-              validationErr: `${this.state.emailID} already belongs to another account`,
-            });
-          }
-        })
-        .catch((error) => {
-          err.push(`${this.state.emailID} already belongs to another account`);
-          this.setState({
-            validationErr: err,
-          });
-          console.log("inside catch");
-          console.log(error);
-        });
-    }
-  }
-
   onSave(e) {
     console.log("save");
-    const userID = cookie.load("cookie");
+    const userID = localStorage.getItem('userID');
     const headers = new Headers();
     e.preventDefault();
     if (this.validateSave() === true) {
       const data = {
-        UserID: userID,
-        UserName: this.state.userName,
-        Password: this.state.password,
-        PhoneNum: this.state.phoneNum,
-        CountryCode: this.state.countryCode,
-        Currency: this.state.currency,
-        Timezone: this.state.timeZone,
-        Language: this.state.language,
-        Image: this.state.image,
+        userID,
+        userName: this.state.userName,
+        password: this.state.password,
+        phoneNum: this.state.phoneNum,
+        countryCode: this.state.countryCode,
+        currency: this.state.currency,
+        timeZone: this.state.timeZone,
+        language: this.state.language,
+        image: this.state.image,
         isPasswordChanged: this.state.isPasswordChanged,
       };
       // set the with credentials to true
@@ -354,9 +318,9 @@ class Profile extends Component {
     console.log(this.state.validationErr);
     let errMsg = "";
 
-    if (cookie.load('cookie') && this.state.isDirectNeeded === true) {
+    if (localStorage.getItem('userID') && this.state.isDirectNeeded === true) {
       redirectVar = <Redirect to="/dashboard" />;
-    } else if (cookie.load('cookie') && this.state.isProfileRedirect === true) {
+    } else if (localStorage.getItem('userID') && this.state.isProfileRedirect === true) {
       redirectVar = <Redirect to="/profile" />;
     } else if (this.state.isLogout) {
       redirectVar = <Redirect to="/" />;
@@ -459,21 +423,6 @@ class Profile extends Component {
                     <Form.Control required type="text" onChange={this.onNameChange} value={this.state.userName} />
                   </Form.Group>
 
-                  <Form.Group as={Col} controlId="validationCustom02">
-                    <Form.Label>Your default currency</Form.Label>
-                    <Form.Control as="select" onChange={this.onCurrencyChange} value={this.state.currency}>
-                      <option>Choose...</option>
-                      <option>USD</option>
-                      <option>KWD</option>
-                      <option>BHD</option>
-                      <option>GBP</option>
-                      <option>EUR</option>
-                      <option>CAD</option>
-                    </Form.Control>
-                  </Form.Group>
-                </Form.Row>
-
-                <Form.Row>
                   <Form.Group as={Col} md="6" controlId="validationCustom03" className="profile-email">
                     <Form.Label>Your email address</Form.Label>
                     {/* <Form.Control required type="text" value={this.state.emailID} onChange={this.onEmailChange} />
@@ -485,6 +434,21 @@ class Profile extends Component {
                       Add new email
                     </Button> */}
                     <Form.Label>{this.state.emailID}</Form.Label>
+                  </Form.Group>
+                </Form.Row>
+
+                <Form.Row>
+                  <Form.Group as={Col} controlId="validationCustom02">
+                    <Form.Label>Your default currency</Form.Label>
+                    <Form.Control as="select" onChange={this.onCurrencyChange} value={this.state.currency}>
+                      <option>Choose...</option>
+                      <option>USD</option>
+                      <option>KWD</option>
+                      <option>BHD</option>
+                      <option>GBP</option>
+                      <option>EUR</option>
+                      <option>CAD</option>
+                    </Form.Control>
                   </Form.Group>
 
                   <Form.Group as={Col} controlId="validationCustom04">
@@ -541,10 +505,10 @@ class Profile extends Component {
                 </Form.Row>
 
                 <Form.Row>
-                  <Form.Group as={Col} md="6" controlId="validationCustom08">
+                  {/* <Form.Group as={Col} md="6" controlId="validationCustom08">
                     <Form.Label>Your password</Form.Label>
                     <Form.Control required type="password" onChange={this.onPasswordChange} value={this.state.password} />
-                  </Form.Group>
+                  </Form.Group> */}
                   <Button
                     variant="primary"
                     type="submit"
@@ -553,7 +517,7 @@ class Profile extends Component {
                       width: "80px",
                       height: "40px",
                       backgroundColor: "#FF652F",
-                      marginLeft: "220px",
+                      marginLeft: "527px",
                       fontSize: "13px",
                     }}
                     onClick={this.onSave}

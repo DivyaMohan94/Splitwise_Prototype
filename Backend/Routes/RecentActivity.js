@@ -1,11 +1,9 @@
 const express = require('express');
-const mysql = require("mysql");
 const mongoose = require('mongoose');
 const Split = require('../Models/Split');
 const GroupDetails = require('../Models/GroupDetailsModel');
 
 const router = express.Router();
-const connection = require("./Connection.js");
 
 router.get("/", (req, res) => {
   console.log("Inside get recent activities");

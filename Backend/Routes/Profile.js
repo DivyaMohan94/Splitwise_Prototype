@@ -4,162 +4,63 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const connection = require("./Connection.js");
+const mongoose = require('mongoose');
+const Users = require('../Models/UserModel');
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  connection.getConnection((err, conn) => {
-    if (err) {
-      console.error(`Database connection failed: ${err.stack}`);
-      return;
+  console.log("Inside get profile details");
+  console.log("Req Body : ", req.body);
+  const userID = mongoose.Types.ObjectId(req.query.userID);
+
+  // Login validation
+  Users.findOne({ _id: userID }, (error, data) => {
+    if (error) {
+      res.writeHead(400, {
+        "content-type": "text/plain",
+      });
+      res.end("Cannot fetch profile details");
+    } else {
+      console.log('profile details', data);
+      res.end(JSON.stringify(data));
     }
-    console.log('Connected to database.');
-    console.log("Inside get profile");
-    console.log("Req Body : ", req.body);
-    console.log(req.originalUrl.split("?")[1].split("=")[1]);
-    const UserID = req.originalUrl.split("?")[1].split("=")[1];
-    const check = `SELECT * FROM UserDetails WHERE UserID = ${mysql.escape(
-      UserID,
-    )}`; // req.session.user.UserID
-    conn.query(check, (error, data) => {
-      if (error) {
-        res.writeHead(400, {
-          "content-type": "text/plain",
-        });
-        res.end("Sql error");
-      } else {
-        console.log("Fetching sql result");
-        console.log(data);
-        res.writeHead(200, {
-          "Content-type": "application/json",
-        });
-        res.end(JSON.stringify(data[0]));
-        conn.release();
-      }
-    });
   });
 });
 
 // Update the profile page
 router.put("/", (req, res) => {
-  connection.getConnection((err, conn) => {
-    if (err) {
-      console.error(`Database connection failed: ${err.stack}`);
-      return;
-    }
-
-    console.log('Connected to database.');
-    console.log("Inside profile update");
-    console.log("Req Body : ", req.body);
-    let updateQuery = "";
-    if (req.body.isPasswordChanged) {
-    // hash the new password and update
-      console.log("inside hash");
-      const saltRounds = 10;
-      bcrypt.hash(req.body.password, saltRounds, (hasherr, hash) => {
-        if (hasherr) {
-          console.log("cannot hash");
-        } else {
-          updateQuery = `UPDATE UserDetails SET UserName = ${mysql.escape(
-            req.body.UserName,
-          )},
-        Password = ${hash},PhoneNum=${mysql.escape(req.body.PhoneNum)},
-        CountryCode = ${mysql.escape(
-    req.body.CountryCode,
-  )},Currency=${mysql.escape(req.body.Currency)}, 
-        Timezone = ${mysql.escape(req.body.Timezone)}, Language=${mysql.escape(
-  req.body.Language,
-)}, 
-        Image=${mysql.escape(req.body.Image)} WHERE UserID = ${
-  req.body.UserID
-}`;
-        }
-      });
-    } else {
-      updateQuery = `UPDATE UserDetails SET UserName = ${mysql.escape(
-        req.body.UserName,
-      )},PhoneNum=${mysql.escape(req.body.PhoneNum)},
-    CountryCode = ${mysql.escape(req.body.CountryCode)},Currency=${mysql.escape(
-  req.body.Currency,
-)}, 
-    Timezone = ${mysql.escape(req.body.Timezone)}, Language=${mysql.escape(
-  req.body.Language,
-)}, 
-    Image=${mysql.escape(req.body.Image)} WHERE UserID = ${req.body.UserID}`;
-    }
-    conn.query(updateQuery, (error, result) => {
-      console.log(error);
+  const userID = mongoose.Types.ObjectId(req.body.userID);
+  Users.updateOne(
+    {
+      _id: userID,
+    },
+    {
+      $set: {
+        userName: req.body.userName,
+        phoneNum: req.body.phoneNum,
+        countryCode: req.body.countryCode,
+        currency: req.body.currency,
+        timeZone: req.body.timeZone,
+        language: req.body.language,
+        image: req.body.image,
+      },
+    },
+    (error, data) => {
       if (error) {
         res.writeHead(400, {
           "content-type": "text/plain",
         });
-        res.end("Sql error");
+        res.end("Cannot update user details");
       } else {
-        console.log("Fetching sql result");
-        console.log(result);
-        res.writeHead(200, {
-          "Content-type": "application/json",
-        });
-        res.end(JSON.stringify(result[0]));
+        console.log(data);
+        // res.writeHead(200, {
+        //   'Content-Type': 'application/json',
+        // });
+        res.end(JSON.stringify(data));
       }
-    });
-  });
-});
-
-// Update Email ID
-router.post("/Email", (req, res) => {
-  connection.getConnection((err, conn) => {
-    if (err) {
-      console.log('Cannot connect to database');
-      console.log(err);
-      throw err;
-    } else {
-      console.log('Connection111 successful');
-      console.log("Inside Email update");
-      // check if email id is associated with any profiles
-      console.log(req.body.Email);
-      const validateQuery = `SELECT UserID FROM UserDetails WHERE Email =${mysql.escape(
-        req.body.Email,
-      )}`;
-      conn.query(validateQuery, (error, result) => {
-        if (error) {
-          res.writeHead(400, {
-            "content-type": "text/plain",
-          });
-          res.end("Sql error");
-        } else {
-          console.log("Inside checking email");
-          if (result.length !== 0) {
-            res.writeHead(400, {
-              "content-type": "text/plain",
-            });
-            console.log("email already exists");
-            res.end("Email exists");
-          } else {
-            const updateEmail = `UPDATE UserDetails SET Email =${mysql.escape(
-              req.body.Email,
-            )} WHERE UserID = ${mysql.escape(req.body.UserID)}`;
-            conn.query(updateEmail, (updateErr, success) => {
-              if (updateErr) {
-                res.writeHead(400, {
-                  "content-type": "text/plain",
-                });
-                res.end("Cannot update Email");
-              } else {
-                res.writeHead(200, {
-                  "content-type": "text/plain",
-                });
-                console.log(success);
-                res.end("Successfully updated Email");
-                conn.release();
-              }
-            });
-          }
-        }
-      });
-    }
-  });
+    },
+  );
 });
 
 // Storing documents/Images
