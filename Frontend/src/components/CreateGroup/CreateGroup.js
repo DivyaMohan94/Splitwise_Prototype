@@ -140,6 +140,7 @@ class CreateGroup extends Component {
 
   suggestFriends() {
     const data = this.props.userDetails.userID;
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/creategroup/getFriends`, {
         params: {
@@ -193,7 +194,7 @@ class CreateGroup extends Component {
       };
       console.log(data);
       // set the with credentials to true
-      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       // make a post request with the user data
       axios
         .post(`${URL_VAL}/creategroup`, data)
@@ -260,11 +261,12 @@ class CreateGroup extends Component {
       const profilePhoto = target.files[0];
       const data = new FormData();
       data.append('photos', profilePhoto);
-      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios.post(`${URL_VAL}/creategroup/upload-file`, data)
         .then((response) => {
           if (response.status === 200) {
             // Download image
+            axios.defaults.headers.common.authorization = localStorage.getItem('token');
             axios.post(`${URL_VAL}/creategroup/getImage/${profilePhoto.name}`)
               .then((res) => {
                 const imagePreview = `data:image/jpg;base64, ${res.data}`;

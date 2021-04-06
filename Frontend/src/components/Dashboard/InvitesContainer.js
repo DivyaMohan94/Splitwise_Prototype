@@ -41,7 +41,7 @@ class InvitesContainer extends Component {
 
   componentDidMount() {
     console.log(`inside component did mount of group ${this.props.groupID}`);
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/group/getGroupDetails`, {
         params: {
@@ -70,7 +70,7 @@ class InvitesContainer extends Component {
       groupID: this.props.groupID,
       userID,
     };
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
 
     axios
       .put(`${URL_VAL}/group/acceptInvites`, data)

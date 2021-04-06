@@ -1,11 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { checkAuth } = require("../Util/passport");
 const Split = require('../Models/Split');
 const GroupDetails = require('../Models/GroupDetailsModel');
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", checkAuth, (req, res) => {
   console.log("Inside get recent activities");
   const userID = mongoose.Types.ObjectId(req.query.userID);
   Split.aggregate([
@@ -44,7 +45,7 @@ router.get("/", (req, res) => {
   });
 });
 
-router.get("/filterGroup", (req, res) => {
+router.get("/filterGroup", checkAuth, (req, res) => {
   console.log("Inside get filter activities");
   const userID = mongoose.Types.ObjectId(req.query.userID);
   let groupID = 0;
@@ -128,7 +129,7 @@ router.get("/filterGroup", (req, res) => {
   }
 });
 
-router.get("/groupsDropdown", (req, res) => {
+router.get("/groupsDropdown", checkAuth, (req, res) => {
   console.log("Inside get recent activities");
   const userID = mongoose.Types.ObjectId(req.query.userID);
   GroupDetails.find({

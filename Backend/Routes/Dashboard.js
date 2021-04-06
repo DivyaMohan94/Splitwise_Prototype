@@ -1,10 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Split = require('../Models/Split');
+const { checkAuth } = require("../Util/passport");
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", checkAuth, (req, res) => {
   const toReceiveVal = [];
   const toGiveVal = [];
   const dashboardData = {
@@ -66,7 +67,7 @@ router.get("/", (req, res) => {
   });
 });
 
-router.get("/AllYouOwe", (req, res) => {
+router.get("/AllYouOwe", checkAuth, (req, res) => {
   console.log("Inside get owe");
   const UserID = mongoose.Types.ObjectId(req.query.UserID);
   Split.aggregate([
@@ -101,7 +102,7 @@ router.get("/AllYouOwe", (req, res) => {
   });
 });
 
-router.get("/AllYouAreOwed", (req, res) => {
+router.get("/AllYouAreOwed", checkAuth, (req, res) => {
   console.log("Inside get owed");
   const UserID = mongoose.Types.ObjectId(req.query.UserID);
   Split.aggregate([
@@ -144,7 +145,7 @@ router.get("/AllYouAreOwed", (req, res) => {
   });
 });
 
-router.put("/settleup", (req, res) => {
+router.put("/settleup", checkAuth, (req, res) => {
   console.log("Inside settle up");
   const payerID = mongoose.Types.ObjectId(req.body.payerID);
   const recipientID = mongoose.Types.ObjectId(req.body.recipientID);

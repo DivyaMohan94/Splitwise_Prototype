@@ -47,6 +47,7 @@ class DashboardContainer extends Component {
   componentDidMount() {
     console.log("inside did mount of dashboard container page");
     const data = localStorage.getItem('userID');
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/dashboard`, {
         params: {
@@ -97,6 +98,7 @@ class DashboardContainer extends Component {
           }
 
           // Fetch Owe details
+          axios.defaults.headers.common.authorization = localStorage.getItem('token');
           axios
             .get(`${URL_VAL}/dashboard/AllYouOwe`, {
               params: {
@@ -115,6 +117,7 @@ class DashboardContainer extends Component {
             });
 
           // Fetch you are owed details
+          axios.defaults.headers.common.authorization = localStorage.getItem('token');
           axios
             .get(`${URL_VAL}/dashboard/AllYouAreOwed`, {
               params: {
@@ -144,6 +147,7 @@ class DashboardContainer extends Component {
     if (this.state.settledUp === true) {
       console.log("inside did update of dashboard container page");
       const data = localStorage.getItem('userID');
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .get(`${URL_VAL}/dashboard`, {
           params: {
@@ -197,6 +201,7 @@ class DashboardContainer extends Component {
             }
 
             // Fetch Owe details
+            axios.defaults.headers.common.authorization = localStorage.getItem('token');
             axios
               .get(`${URL_VAL}/dashboard/AllYouOwe`, {
                 params: {
@@ -216,6 +221,7 @@ class DashboardContainer extends Component {
               });
 
             // Fetch you are owed details
+            axios.defaults.headers.common.authorization = localStorage.getItem('token');
             axios
               .get(`${URL_VAL}/dashboard/AllYouAreOwed`, {
                 params: {

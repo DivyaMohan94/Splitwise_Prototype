@@ -36,7 +36,8 @@ router.post("/", (req, res) => {
         const token = jwt.sign(payload, secret, {
           expiresIn: 1008000,
         });
-        res.status(200).json({ token, payload });
+        const fullToken = `JWT ${token}`;
+        res.status(200).json({ fullToken, payload });
         console.log('login successful');
       }
     }

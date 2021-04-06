@@ -5,10 +5,11 @@ const fs = require("fs");
 const mongoose = require('mongoose');
 const Users = require('../Models/UserModel');
 const GroupDetails = require('../Models/GroupDetailsModel');
+const { checkAuth } = require("../Util/passport");
 
 const router = express.Router();
 
-router.post("/", (req, res) => {
+router.post("/", checkAuth, (req, res) => {
   console.log("Inside create group");
   console.log("Req Body : ", req.body);
   const createdBy = mongoose.Types.ObjectId(req.body.createdBy);
@@ -128,7 +129,7 @@ router.post("/", (req, res) => {
   });
 });
 
-router.get("/getFriends", (req, res) => {
+router.get("/getFriends", checkAuth, (req, res) => {
   console.log("Inside get friends list");
   Users.find({}, { userName: 1, emailID: 1, _id: 1 }, (userErr, userData) => {
     if (userErr) {

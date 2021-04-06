@@ -68,6 +68,7 @@ class GroupsContainer extends Component {
   componentDidMount() {
     const userID = localStorage.getItem('userID');
     console.log(`inside component did mount of group ${this.props.groupID}`);
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/group/AllTransaction`, {
         params: {
@@ -91,6 +92,7 @@ class GroupsContainer extends Component {
 
     // Download image
     if (this.state.groupImage) {
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios.post(`${URL_VAL}/profile/getImage/${this.state.groupImage}`)
         .then((res) => {
           const imagePreview = `data:image/jpg;base64, ${res.data}`;
@@ -105,6 +107,7 @@ class GroupsContainer extends Component {
     if (this.state.isGroupUpdated === true) {
       const { userID } = this.state;
       console.log(`inside component did update of group ${this.props.groupID}`);
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .get(`${URL_VAL}/group/AllTransaction`, {
           params: {
@@ -140,11 +143,12 @@ class GroupsContainer extends Component {
       const profilePhoto = target.files[0];
       const data = new FormData();
       data.append('photos', profilePhoto);
-      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios.post(`${URL_VAL}/profile/upload-file`, data)
         .then((response) => {
           if (response.status === 200) {
             // Download image
+            axios.defaults.headers.common.authorization = localStorage.getItem('token');
             axios.post(`${URL_VAL}/profile/getImage/${profilePhoto.name}`)
               .then((res) => {
                 const imagePreview = `data:image/jpg;base64, ${res.data}`;
@@ -168,6 +172,7 @@ class GroupsContainer extends Component {
   }
 
   OnTransactionClick(transactionID) {
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/group/Transaction`, {
         params: {
@@ -192,6 +197,7 @@ class GroupsContainer extends Component {
       Image: this.state.groupImage,
       GroupID: this.props.groupID,
     };
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .put(`${URL_VAL}/group/changeImage`, data)
       .then((response) => {
@@ -243,7 +249,7 @@ class GroupsContainer extends Component {
       };
       console.log(data);
       // set the with credentials to true
-      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .post(`${URL_VAL}/group/addNotes`, data)
         .then((response) => {
@@ -271,7 +277,7 @@ class GroupsContainer extends Component {
       transactionID,
     };
     // set the with credentials to true
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .post(`${URL_VAL}/group/deleteNotes`, data)
       .then((response) => {

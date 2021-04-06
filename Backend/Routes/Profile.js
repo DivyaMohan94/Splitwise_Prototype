@@ -1,15 +1,14 @@
 const express = require("express");
-const mysql = require("mysql");
-const bcrypt = require("bcrypt");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const mongoose = require('mongoose');
+const { checkAuth } = require("../Util/passport");
 const Users = require('../Models/UserModel');
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", checkAuth, (req, res) => {
   console.log("Inside get profile details");
   console.log("Req Body : ", req.body);
   const userID = mongoose.Types.ObjectId(req.query.userID);
@@ -29,7 +28,7 @@ router.get("/", (req, res) => {
 });
 
 // Update the profile page
-router.put("/", (req, res) => {
+router.put("/", checkAuth, (req, res) => {
   const userID = mongoose.Types.ObjectId(req.body.userID);
   Users.updateOne(
     {

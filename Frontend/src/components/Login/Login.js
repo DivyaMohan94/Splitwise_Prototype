@@ -78,7 +78,7 @@ class Login extends Component {
               validationErr: false,
               // userID: response.data.UserID,
               isRedirectNeeded: true,
-              token: response.data.token,
+              token: response.data.fullToken,
               userID: response.data.payload._id,
               emailID: response.data.payload.emailID,
               userName: response.data.payload.userName,

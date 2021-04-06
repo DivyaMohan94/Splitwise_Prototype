@@ -1,12 +1,13 @@
 const express = require("express");
 const mongoose = require('mongoose');
+const { checkAuth } = require("../Util/passport");
 const Transactions = require('../Models/TransactionModel');
 const GroupDetails = require('../Models/GroupDetailsModel');
 const Split = require('../Models/Split');
 
 const router = express.Router();
 
-router.get("/getActiveGroups", (req, res) => {
+router.get("/getActiveGroups", checkAuth, (req, res) => {
   GroupDetails.find({
     members: { $elemMatch: { userID: req.query.UserID, status: 'ok' } },
   }, (error, data) => {
@@ -22,7 +23,7 @@ router.get("/getActiveGroups", (req, res) => {
   });
 });
 
-router.get("/invites", (req, res) => {
+router.get("/invites", checkAuth, (req, res) => {
   GroupDetails.find({
     members: { $elemMatch: { userID: req.query.UserID, status: 'pending' } },
   }, (error, data) => {
@@ -38,7 +39,7 @@ router.get("/invites", (req, res) => {
   });
 });
 
-router.put("/acceptInvites", (req, res) => {
+router.put("/acceptInvites", checkAuth, (req, res) => {
   console.log("Inside accept invites");
   const userID = mongoose.Types.ObjectId(req.body.userID);
   const groupID = mongoose.Types.ObjectId(req.body.groupID);
@@ -70,7 +71,7 @@ router.put("/acceptInvites", (req, res) => {
 });
 
 // Add expense - description, total amt, owner id, groupID, currency --> returns transaction id
-router.post("/addexpense", (req, res) => {
+router.post("/addexpense", checkAuth, (req, res) => {
   const { groupID } = req.body;
   const { groupName } = req.body;
   const { description } = req.body;
@@ -179,7 +180,7 @@ router.post("/addexpense", (req, res) => {
 });
 
 // Get All group transactions - need groupid
-router.get("/AllTransaction", (req, res) => {
+router.get("/AllTransaction", checkAuth, (req, res) => {
   const groupID = mongoose.Types.ObjectId(req.query.groupID);
   console.log('groupID :', groupID);
 
@@ -207,7 +208,7 @@ router.get("/AllTransaction", (req, res) => {
 });
 
 // Get individual transaction -- need transaction id
-router.get("/Transaction", (req, res) => {
+router.get("/Transaction", checkAuth, (req, res) => {
   const transactionID = mongoose.Types.ObjectId(req.query.TransactionID);
   Split.aggregate([
     { $match: { transactionID } },
@@ -241,7 +242,7 @@ router.get("/Transaction", (req, res) => {
   });
 });
 
-router.get("/getGroupDetails", (req, res) => {
+router.get("/getGroupDetails", checkAuth, (req, res) => {
   const groupID = mongoose.Types.ObjectId(req.query.GroupID);
   console.log('groupID :', groupID);
 
@@ -268,7 +269,7 @@ router.get("/getGroupDetails", (req, res) => {
   });
 });
 
-router.get("/getDues", (req, res) => {
+router.get("/getDues", checkAuth, (req, res) => {
   console.log("Inside get owe");
   const userID = mongoose.Types.ObjectId(req.query.userID);
   const groupID = mongoose.Types.ObjectId(req.query.groupID);
@@ -321,7 +322,7 @@ router.get("/getDues", (req, res) => {
   // });
 });
 
-router.put("/leaveGroup", (req, res) => {
+router.put("/leaveGroup", checkAuth, (req, res) => {
   console.log("Inside accept invites");
   const userID = mongoose.Types.ObjectId(req.body.userID);
   const groupID = mongoose.Types.ObjectId(req.body.groupID);
@@ -352,7 +353,7 @@ router.put("/leaveGroup", (req, res) => {
   );
 });
 
-router.post("/addNotes", (req, res) => {
+router.post("/addNotes", checkAuth, (req, res) => {
   console.log("Inside add notes");
   const userID = mongoose.Types.ObjectId(req.body.userID);
   const transactionID = mongoose.Types.ObjectId(req.body.transactionID);
@@ -388,7 +389,7 @@ router.post("/addNotes", (req, res) => {
   );
 });
 
-router.post("/deleteNotes", (req, res) => {
+router.post("/deleteNotes", checkAuth, (req, res) => {
   console.log("Inside delete notes");
   const noteID = mongoose.Types.ObjectId(req.body.noteID);
   const transactionID = mongoose.Types.ObjectId(req.body.transactionID);

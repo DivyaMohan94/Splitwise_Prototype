@@ -63,6 +63,7 @@ class Profile extends Component {
     if (data === "" || data === undefined) {
       this.handleLogout();
     } else {
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .get(`${URL_VAL}/profile`, {
           params: {
@@ -91,6 +92,7 @@ class Profile extends Component {
 
             // Download image
             if (response.data.Image) {
+              axios.defaults.headers.common.authorization = localStorage.getItem('token');
               axios.post(`${URL_VAL}/profile/getImage/${response.data.Image}`)
                 .then((res) => {
                   const imagePreview = `data:image/jpg;base64, ${res.data}`;
@@ -115,13 +117,14 @@ class Profile extends Component {
       const profilePhoto = target.files[0];
       const data = new FormData();
       data.append('photos', profilePhoto);
-      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios.post(`${URL_VAL}/profile/upload-file`, data)
         .then((response) => {
           if (response.status === 200) {
             console.log('Profile Photo Name: ', profilePhoto.name);
 
             // Download image
+            axios.defaults.headers.common.authorization = localStorage.getItem('token');
             axios.post(`${URL_VAL}/profile/getImage/${profilePhoto.name}`)
               .then((res) => {
                 const imagePreview = `data:image/jpg;base64, ${res.data}`;
@@ -237,7 +240,7 @@ class Profile extends Component {
         isPasswordChanged: this.state.isPasswordChanged,
       };
       // set the with credentials to true
-      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       // make a post request with the user data
       axios
         .put(`${URL_VAL}/profile`, data)

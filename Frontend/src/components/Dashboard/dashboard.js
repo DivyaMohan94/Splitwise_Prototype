@@ -66,6 +66,7 @@ class Dashboard extends Component {
         isLogout: true,
       });
     } else {
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .get(`${URL_VAL}/group/getActiveGroups`, {
           params: {
@@ -86,6 +87,7 @@ class Dashboard extends Component {
           console.log(error);
         });
 
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .get(`${URL_VAL}/group/invites`, {
           params: {
@@ -115,8 +117,7 @@ class Dashboard extends Component {
     const data = localStorage.getItem('userID');
     console.log(`checking status for update ${this.state.isUpdate}`);
     if (this.state.isUpdate === true) {
-      const headers = new Headers();
-      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .get(`${URL_VAL}/group/getActiveGroups`, {
           params: {
@@ -138,6 +139,7 @@ class Dashboard extends Component {
           console.log(error);
         });
 
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .get(`${URL_VAL}/group/invites`, {
           params: {

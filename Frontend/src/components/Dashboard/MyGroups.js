@@ -43,6 +43,7 @@ class MyGroups extends Component {
 
   componentDidMount() {
     const data = localStorage.getItem('userID');
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/group/getActiveGroups`, {
         params: {
@@ -67,6 +68,7 @@ class MyGroups extends Component {
         console.log(error);
       });
 
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/group/invites`, {
         params: {
@@ -94,6 +96,7 @@ class MyGroups extends Component {
   componentDidUpdate() {
     if (this.state.isUpdate) {
       const data = localStorage.getItem('userID');
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .get(`${URL_VAL}/group/getActiveGroups`, {
           params: {
@@ -127,6 +130,7 @@ class MyGroups extends Component {
           console.log(error);
         });
 
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .get(`${URL_VAL}/group/invites`, {
           params: {
@@ -158,7 +162,7 @@ class MyGroups extends Component {
     e.preventDefault();
     const userID = localStorage.getItem('userID');
     const groupID = e.target.id;
-    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/group/getDues`, {
         params: {
@@ -184,6 +188,8 @@ class MyGroups extends Component {
             userID,
             groupID,
           };
+
+          axios.defaults.headers.common.authorization = localStorage.getItem('token');
           axios
             .put(`${URL_VAL}/group/leaveGroup`, data)
             .then((res) => {

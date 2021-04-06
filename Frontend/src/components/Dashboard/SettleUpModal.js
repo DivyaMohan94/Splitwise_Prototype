@@ -40,6 +40,7 @@ class SettleUp extends Component {
   componentDidMount() {
     console.log("inside component did mount of settle up");
     const data = localStorage.getItem('userID');
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/creategroup/getFriends`, {
         params: {
@@ -72,7 +73,7 @@ class SettleUp extends Component {
       };
       console.log(data);
       // set the with credentials to true
-      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common.authorization = localStorage.getItem('token');
       // make a post request with the user data
       axios
         .put(`${URL_VAL}/dashboard/settleup`, data)
