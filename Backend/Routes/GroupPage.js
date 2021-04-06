@@ -352,6 +352,67 @@ router.put("/leaveGroup", (req, res) => {
   );
 });
 
+router.post("/addNotes", (req, res) => {
+  console.log("Inside add notes");
+  const userID = mongoose.Types.ObjectId(req.body.userID);
+  const transactionID = mongoose.Types.ObjectId(req.body.transactionID);
+  const { addedUser } = req.body;
+  const { note } = req.body;
+  console.log(userID);
+  const notesObj = {
+    note,
+    addedBy: userID,
+    addedUser,
+  };
+  Transactions.updateOne(
+    {
+      _id: transactionID,
+    },
+    {
+      $push: {
+        notes: notesObj,
+      },
+    },
+    (error, data) => {
+      if (error) {
+        console.log("Cannot add notes", error);
+        res.writeHead(400, {
+          "content-type": "text/plain",
+        });
+        res.end("Cannot add notes");
+      } else {
+        console.log(data);
+        res.status(200).json(data);
+      }
+    },
+  );
+});
+
+router.post("/deleteNotes", (req, res) => {
+  console.log("Inside delete notes");
+  const noteID = mongoose.Types.ObjectId(req.body.noteID);
+  const transactionID = mongoose.Types.ObjectId(req.body.transactionID);
+
+  Transactions.updateOne(
+    {
+      _id: transactionID,
+    },
+    { $pull: { notes: { _id: noteID } } },
+    (error, data) => {
+      if (error) {
+        console.log("Cannot delete notes", error);
+        res.writeHead(400, {
+          "content-type": "text/plain",
+        });
+        res.end("Cannot delete notes");
+      } else {
+        console.log(data);
+        res.status(200).json(data);
+      }
+    },
+  );
+});
+
 // router.put("/changeImage", (req, res) => {
 //   connection.getConnection((err, conn) => {
 //     if (err) {

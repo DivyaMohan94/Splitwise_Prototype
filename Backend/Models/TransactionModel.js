@@ -10,14 +10,12 @@ const transactionSchema = new Schema({
   createdOn: { type: Date, default: new Date() },
   totalAmount: { type: Number, required: true },
   lentAmount: { type: Number },
-
-  // split: [{
-  //   splitAmount: { type: Schema.Types.Decimal128, required: true },
-  //   userID: { type: Schema.Types.ObjectId },
-  //   oweToID: { type: Schema.Types.ObjectId },
-  //   paymentStatus: { type: String, required: true },
-  //   updatedOn: { type: Date, default: new Date() },
-  // }],
+  notes: [{
+    note: { type: String },
+    addedBy: { type: Schema.Types.ObjectId, ref: 'Users' },
+    addedOn: { type: Date, default: new Date() },
+    addedUser: { type: String },
+  }],
 },
 {
   versionKey: false,
