@@ -18,7 +18,7 @@ import Row from "react-bootstrap/Row";
 import { connect } from "react-redux";
 import URL_VAL from '../../backend';
 import avatar from "../Images/avatar.png";
-// import { userLogin } from "../../actions/loginaction";
+import { updateProfile } from "../../actions/updateProfileAction";
 
 // create the Navbar Component
 class Profile extends Component {
@@ -34,6 +34,8 @@ class Profile extends Component {
       timeZone: '',
       language: '',
       image: '',
+      userID: this.props.userID,
+      createdAt: this.props.createdAt,
       isPasswordChanged: false,
       validationErr: [],
       isDirectNeeded: false,
@@ -59,11 +61,11 @@ class Profile extends Component {
 
   componentDidMount() {
     console.log("inside did mount of profile page");
-    const data = localStorage.getItem('userID');
+    const data = this.props.userID;
     if (data === "" || data === undefined) {
       this.handleLogout();
     } else {
-      axios.defaults.headers.common.authorization = localStorage.getItem('token');
+      // axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios
         .get(`${URL_VAL}/profile`, {
           params: {
@@ -88,12 +90,12 @@ class Profile extends Component {
               imagePreview: undefined,
             });
             // set image
-            console.log('Profile Photo Name: ', response.data.Image);
+            console.log('Profile Photo Name: ', response.data.image);
 
             // Download image
-            if (response.data.Image) {
-              axios.defaults.headers.common.authorization = localStorage.getItem('token');
-              axios.post(`${URL_VAL}/profile/getImage/${response.data.Image}`)
+            if (response.data.image) {
+              // axios.defaults.headers.common.authorization = localStorage.getItem('token');
+              axios.post(`${URL_VAL}/profile/getImage/${response.data.image}`)
                 .then((res) => {
                   const imagePreview = `data:image/jpg;base64, ${res.data}`;
                   this.setState({
@@ -117,14 +119,14 @@ class Profile extends Component {
       const profilePhoto = target.files[0];
       const data = new FormData();
       data.append('photos', profilePhoto);
-      axios.defaults.headers.common.authorization = localStorage.getItem('token');
+      // axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios.post(`${URL_VAL}/profile/upload-file`, data)
         .then((response) => {
           if (response.status === 200) {
             console.log('Profile Photo Name: ', profilePhoto.name);
 
             // Download image
-            axios.defaults.headers.common.authorization = localStorage.getItem('token');
+            // axios.defaults.headers.common.authorization = localStorage.getItem('token');
             axios.post(`${URL_VAL}/profile/getImage/${profilePhoto.name}`)
               .then((res) => {
                 const imagePreview = `data:image/jpg;base64, ${res.data}`;
@@ -254,6 +256,29 @@ class Profile extends Component {
             });
             localStorage.setItem('username', this.state.userName);
             localStorage.setItem('currency', this.state.currency);
+            const _id = this.state.userID;
+            const { emailID } = this.state;
+            const { userName } = this.state;
+            const { currency } = this.state;
+            const { phoneNum } = this.state;
+            const { timeZone } = this.state;
+            const { createdAt } = this.state;
+            const { countryCode } = this.state;
+            const { language } = this.state;
+            const { image } = this.state;
+            const payloadData = {
+              _id,
+              emailID,
+              userName,
+              currency,
+              phoneNum,
+              timeZone,
+              createdAt,
+              countryCode,
+              language,
+              image,
+            };
+            this.props.updateProfile(payloadData);
           } else if (response.status === 400) {
             console.log("cannot save profile details");
             this.setState({
@@ -269,9 +294,6 @@ class Profile extends Component {
         .catch((error) => {
           console.log(error);
         });
-      const { userName } = this.state;
-      const { currency } = this.state;
-      const { emailID } = this.state;
       // this.props.userLogin({
       //   userName, currency, emailID,
       // });
@@ -538,6 +560,23 @@ class Profile extends Component {
     );
   }
 }
-export default Profile;
 
-// export default connect(null, { userLogin })(Profile);
+const mapStateToProps = (state, ownProps) => {
+  console.log("Accessing store:", state);
+  // console.log("ownprops:", ownProps);
+  return {
+    userID: state.userReducer._id,
+    emailID: state.userReducer.emailID,
+    userName: state.userReducer.userName,
+    currency: state.userReducer.currency,
+    phoneNum: state.userReducer.phoneNum,
+    countryCode: state.userReducer.countryCode,
+    timeZone: state.userReducer.timeZone,
+    createdAt: state.userReducer.createdAt,
+    language: state.userReducer.language,
+    image: state.userReducer.image,
+  };
+};
+// export default Profile;
+
+export default connect(mapStateToProps, { updateProfile })(Profile);

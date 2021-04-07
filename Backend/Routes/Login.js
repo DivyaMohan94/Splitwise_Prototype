@@ -31,7 +31,16 @@ router.post("/", (req, res) => {
         res.end('Invalid Credentials');
       } else {
         const payload = {
-          _id: data._id, userName: data.userName, currency: data.currency, emailID: data.emailID,
+          _id: data._id,
+          userName: data.userName,
+          currency: data.currency,
+          emailID: data.emailID,
+          phoneNum: data.phoneNum,
+          countryCode: data.countryCode,
+          timeZone: data.timeZone,
+          createdAt: data.createdAt,
+          language: data.language,
+          image: data.image,
         };
         const token = jwt.sign(payload, secret, {
           expiresIn: 1008000,

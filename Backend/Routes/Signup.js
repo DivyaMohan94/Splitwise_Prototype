@@ -68,11 +68,18 @@ router.post('/', (req, res) => {
                   userName: insertData.userName,
                   currency: insertData.currency,
                   emailID: insertData.emailID,
+                  phoneNum: insertData.phoneNum,
+                  countryCode: insertData.countryCode,
+                  timeZone: insertData.timeZone,
+                  createdAt: insertData.createdAt,
+                  language: insertData.language,
+                  image: insertData.image,
                 };
                 const token = jwt.sign(payload, secret, {
                   expiresIn: 1008000,
                 });
-                res.status(200).json({ token, payload });
+                const fullToken = `JWT ${token}`;
+                res.status(200).json({ fullToken, payload });
               }
             });
           }

@@ -79,19 +79,40 @@ class SignUp extends Component {
         .post(`${URL_VAL}/signup`, data)
         .then((response) => {
           console.log("Status Code : ", response.status);
-          console.log("Status Code : ", response.data.payload);
+          console.log("Status Code : ", response.data);
           if (response.status === 200) {
             console.log("inside success");
             this.setState({
               isDirectNeeded: true,
-              token: response.data.token,
+              token: response.data.fullToken,
               emailID: response.data.payload.emailID,
               name: response.data.payload.userName,
               currency: response.data.payload.currency,
               userID: response.data.payload._id,
             });
-            // eslint-disable-next-line react/destructuring-assignment
-            this.props.signup(response.data.payload);
+            const { _id } = response.data.payload;
+            const { emailID } = response.data.payload;
+            const { userName } = response.data.payload;
+            const { currency } = response.data.payload;
+            const { phoneNum } = response.data.payload;
+            const { timeZone } = response.data.payload;
+            const { createdAt } = response.data.payload;
+            const { countryCode } = response.data.payload;
+            const { language } = response.data.payload;
+            const { image } = response.data.payload;
+            const payloadData = {
+              _id,
+              emailID,
+              userName,
+              currency,
+              phoneNum,
+              timeZone,
+              createdAt,
+              countryCode,
+              language,
+              image,
+            };
+            this.props.signup(payloadData);
           } else {
             console.log("db error");
             this.setState({
@@ -151,7 +172,6 @@ class SignUp extends Component {
 
   render() {
     console.log("render called");
-    console.log(this.state.validationErr);
     let redirectVar = null;
     let errMsg = "";
 
@@ -248,10 +268,10 @@ class SignUp extends Component {
 const mapStateToProps = (state) => {
   console.log("state customer signup reducer:", state);
   return {
-    userID: state.signup._id,
-    emailID: state.signup.emailID,
-    userName: state.signup.userName,
-    currency: state.signup.currency,
+    userID: state.userReducer._id,
+    emailID: state.userReducer.emailID,
+    userName: state.userReducer.userName,
+    currency: state.userReducer.currency,
   };
 };
 

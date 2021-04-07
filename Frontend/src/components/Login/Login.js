@@ -70,7 +70,7 @@ class Login extends Component {
         .post(`${URL_VAL}/login`, data)
         .then((response) => {
           console.log("Status Code : ", response.status);
-          console.log("Status Code : ", response.data.payload);
+          console.log("Status Code : ", response.data.fullToken);
           if (response.status === 200) {
             console.log("inside success");
             console.log(response.data);
@@ -89,8 +89,24 @@ class Login extends Component {
             const { emailID } = response.data.payload;
             const { userName } = response.data.payload;
             const { currency } = response.data.payload;
+            const { phoneNum } = response.data.payload;
+            const { createdAt } = response.data.payload;
+            const { countryCode } = response.data.payload;
+            const { timeZone } = response.data.payload;
+            const { language } = response.data.payload;
+            const { image } = response.data.payload;
+
             const payloadData = {
-              _id, emailID, userName, currency,
+              _id,
+              emailID,
+              userName,
+              currency,
+              phoneNum,
+              createdAt,
+              countryCode,
+              timeZone,
+              language,
+              image,
             };
             this.props.userLogin(payloadData);
           } else {
@@ -242,13 +258,13 @@ class Login extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log("state customer login reducer:", state.login);
+  console.log("state customer login reducer:", state);
   // console.log("ownprops:", ownProps);
   return {
-    userID: state.login._id,
-    emailID: state.login.emailID,
-    userName: state.login.userName,
-    currency: state.login.currency,
+    userID: state.userReducer._id,
+    emailID: state.userReducer.emailID,
+    userName: state.userReducer.userName,
+    currency: state.userReducer.currency,
   };
 };
 
