@@ -30,7 +30,7 @@ router.get("/", checkAuth, (req, res) => {
         as: "owner",
       },
     },
-    { $sort: { updatedOn: 1 } },
+    { $sort: { updatedOn: -1 } },
   ],
   (error, data) => {
     if (error) {
@@ -113,7 +113,7 @@ router.get("/filterGroup", checkAuth, (req, res) => {
           as: "owner",
         },
       },
-      { $sort: { updatedOn: 1 } },
+      { $sort: { updatedOn: -1 } },
     ],
     (error, data) => {
       if (error) {

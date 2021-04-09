@@ -20,6 +20,7 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import { connect } from "react-redux";
 import numeral from 'numeral';
+import ReactPaginate from 'react-paginate';
 import URL_VAL from "../../backend";
 import { logout } from "../../actions/loginaction";
 import SideNav from "./sideNav";
@@ -35,9 +36,19 @@ class RecentActivity extends Component {
       selectedGroup: "",
       selectedSort: "Most recent first",
       recentActivityDesc: {},
+
+      // pagination
+      offset: 0,
+      perPage: 2,
+      currentPage: 0,
+      ordersToDisplay: [],
+      orgOrdersToDisplay: [],
+      isPerPageChanged: false,
     };
     this.onGroupChange = this.onGroupChange.bind(this);
     this.onSortChange = this.onSortChange.bind(this);
+    this.handlePageclick = this.handlePageclick.bind(this);
+    this.onPageSizeChanged = this.onPageSizeChanged.bind(this);
   }
 
   componentDidMount() {
@@ -62,6 +73,7 @@ class RecentActivity extends Component {
               // sortedActivities: response.data.reverse(),
               isDataPresent: true,
             });
+            this.applyPagination();
           } else {
             this.setState({
               isDataPresent: false,
@@ -96,6 +108,28 @@ class RecentActivity extends Component {
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.state.isPerPageChanged === true) {
+      console.log('inside comp did update');
+      this.setState({
+        isPerPageChanged: false,
+      });
+      this.applyPagination();
+    }
+  }
+
+  handlePageclick(e) {
+    const selectedPage = e.selected;
+    const offset = selectedPage * this.state.perPage;
+    console.log('handle page change', selectedPage, offset);
+    this.setState({
+      currentPage: selectedPage,
+      offset,
+    }, () => {
+      this.loadMoreOrders();
+    });
   }
 
   onGroupChange(e) {
@@ -146,22 +180,63 @@ class RecentActivity extends Component {
 
   onSortChange(e) {
     console.log(e.target.selectedIndex);
-    console.log(`bug${JSON.stringify(this.state.recentActivityDesc)}`);
-    if (e.target.selectedIndex === 1) {
-      const sortedActivities = this.state.recentActivity.reverse();
+    if (e.target.selectedIndex === 0) {
+      const { recentActivity } = this.state;
+      recentActivity.sort((a, b) => a - b).reverse();
       this.setState({
-        selectedSort: "Most recent last",
-        recentActivity: sortedActivities,
+        recentActivity,
+        isPerPageChanged: true,
+        currentPage: 0,
+        offset: 0,
       });
+      console.log('inside des');
     } else {
+      const { recentActivity } = this.state;
+      recentActivity.sort((a, b) => a - b).reverse();
       this.setState({
-        selectedSort: "Most recent first",
-        recentActivity: this.state.recentActivityDesc,
+        recentActivity,
+        isPerPageChanged: true,
+        currentPage: 0,
+        offset: 0,
       });
+      console.log(e.target.selectedIndex);
+      console.log('inside asc');
     }
   }
 
+  onPageSizeChanged(e) {
+    this.setState({
+      perPage: parseInt(e.target.value, 10),
+      offset: 0,
+      currentPage: 0,
+      isPerPageChanged: true,
+    });
+  }
+
+  loadMoreOrders() {
+    const data = this.state.orgOrdersToDisplay;
+    const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage);
+
+    this.setState({
+      pageCount: Math.ceil(data.length / this.state.perPage),
+      ordersToDisplay: slice,
+    });
+  }
+
+  applyPagination() {
+    const orders = this.state.recentActivity;
+    const slice = orders.slice(this.state.offset, this.state.offset + this.state.perPage);
+    console.log('splitting in apply page', this.state.offset, this.state.offset + this.state.perPage, slice);
+
+    this.setState({
+      pageCount: Math.ceil(orders.length / this.state.perPage),
+      orgOrdersToDisplay: orders,
+      ordersToDisplay: slice,
+    });
+  }
+
   render() {
+    console.log('render called');
     const noDataMsg = "You do not have any recent activities";
     const { isDataPresent, recentActivity } = this.state;
     const data = localStorage.getItem('userID');
@@ -198,7 +273,7 @@ class RecentActivity extends Component {
           </Col>
           <Col md={3}>
             {/* {isDataPresent && ( */}
-            <Form.Control as="select" onChange={this.onSortChange} value={this.state.selectedSort}>
+            <Form.Control as="select" onChange={this.onSortChange} defaultValue={this.state.selectedSort}>
               <option id="1">Most recent first</option>
               <option id="2">Most recent last</option>
             </Form.Control>
@@ -212,9 +287,9 @@ class RecentActivity extends Component {
           </Col>
         </Row>
         <Row>
-          <Col md={1} />
-          <Col md={10}>
-            {isDataPresent && recentActivity.map((item, index) => {
+          {/* <Col md={1} /> */}
+          <Col md={12}>
+            {isDataPresent && this.state.ordersToDisplay.map((item, index) => {
               let message = "";
               const date = item.createdOn.slice(0, 10);
               let status = "";
@@ -346,6 +421,36 @@ class RecentActivity extends Component {
                 </Card>
               );
             })}
+          </Col>
+        </Row>
+        <Row style={{ marginTop: '20px' }}>
+          <Col md="6" />
+          <Col md="auto" style={{ marginTop: '12px' }}>
+            <Form.Control as="select" onChange={this.onPageSizeChanged} style={{ width: '100px' }}>
+              <option id="1">2</option>
+              <option id="2">5</option>
+              <option id="2">10</option>
+            </Form.Control>
+          </Col>
+          <Col md="auto">
+            <div>
+              <ReactPaginate
+                previousLabel="prev"
+                nextLabel="next"
+                breakLabel="..."
+                breakClassName="break-me"
+                pageCount={this.state.pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={this.handlePageclick}
+                initialPage={0}
+                forcePage={this.state.currentPage}
+                containerClassName="pagination"
+                subContainerClassName="pages pagination"
+                activeClassName="active"
+              />
+              {' '}
+            </div>
           </Col>
         </Row>
       </Container>
