@@ -1,6 +1,9 @@
 /* eslint-disable func-names */
+// import {
+//   USER_LOGIN, USER_LOGOUT, USER_SIGNEDUP, PROFILE_UPDATED,
+// } from "../constants/actionTypes";
 import {
-  USER_LOGIN, USER_LOGOUT, USER_SIGNEDUP, PROFILE_UPDATED,
+  USER_LOGIN, USER_SIGNEDUP, PROFILE_UPDATED,
 } from "../constants/actionTypes";
 
 const initialState = {
@@ -27,9 +30,9 @@ export default function (state = initialState, action) {
         ...state,
         ...action.payload,
       };
-    case USER_LOGOUT:
-      localStorage.clear();
-      return {};
+    // case USER_LOGOUT:
+    //   localStorage.clear();
+    //   return {};
     case USER_SIGNEDUP:
       console.log('inside signup reducer part');
       return {

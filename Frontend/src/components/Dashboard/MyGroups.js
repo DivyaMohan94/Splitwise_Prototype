@@ -21,6 +21,7 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import { connect } from "react-redux";
 import URL_VAL from "../../backend";
+import { groupLeft } from '../../actions/myGroupsAction';
 
 // create the Navbar Component
 class MyGroups extends Component {
@@ -201,6 +202,7 @@ class MyGroups extends Component {
                   isUpdate: true,
                 });
                 this.props.updateOnLeaveGroup();
+                this.props.groupLeft("Left group successfully");
               }
             })
             .catch((error) => {
@@ -385,4 +387,13 @@ class MyGroups extends Component {
   }
 }
 
-export default MyGroups;
+function mapDispatchToProps(dispatch) {
+  console.log("in dispatch");
+  return {
+    groupLeft: (payload) => dispatch(groupLeft(payload)),
+  };
+}
+
+// export default MyGroups;
+
+export default connect(null, mapDispatchToProps)(MyGroups);

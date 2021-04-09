@@ -28,6 +28,7 @@ import RecentActivity from "./RecentActivity";
 import GroupsContainer from "./GroupsContainer";
 import InvitesContainer from "./InvitesContainer";
 import MyGroups from './MyGroups';
+import { getActiveGroupsData, getInvitesData } from "../../actions/sidenavAction";
 
 // create the Navbar Component
 class Dashboard extends Component {
@@ -81,6 +82,7 @@ class Dashboard extends Component {
             this.setState({
               groups: response.data,
             });
+            this.props.getActiveGroupsData(response.data);
           }
         })
         .catch((error) => {
@@ -102,6 +104,7 @@ class Dashboard extends Component {
             this.setState({
               invites: response.data,
             });
+            this.props.getInvitesData(response.data);
           }
         })
         .catch((error) => {
@@ -133,6 +136,7 @@ class Dashboard extends Component {
               groups: response.data,
               status: "",
             });
+            this.props.getActiveGroupsData(response.data);
           }
         })
         .catch((error) => {
@@ -154,6 +158,7 @@ class Dashboard extends Component {
             this.setState({
               invites: response.data,
             });
+            this.props.getInvitesData(response.data);
           }
         })
         .catch((error) => {
@@ -462,12 +467,26 @@ class Dashboard extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({ userDetails: state.login });
+// const mapStateToProps = (state) => ({ userDetails: state.userReducer });
+const mapStateToProps = (state) => {
+  console.log("checking:", state);
+  if (state.userReducer !== undefined) {
+    return {
+
+      userID: state.userReducer._id,
+      emailID: state.userReducer.emailID,
+      userName: state.userReducer.userName,
+      currency: state.userReducer.currency,
+    };
+  }
+};
 
 function mapDispatchToProps(dispatch) {
   console.log("in dispatch");
   return {
     logout: () => dispatch(logout()),
+    getActiveGroupsData: (payload) => dispatch(getActiveGroupsData(payload)),
+    getInvitesData: (payload) => dispatch(getInvitesData(payload)),
   };
 }
 

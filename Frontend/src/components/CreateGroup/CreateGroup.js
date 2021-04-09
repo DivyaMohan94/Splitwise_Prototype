@@ -17,6 +17,7 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import URL_VAL from "../../backend";
 import { logout } from "../../actions/loginaction";
+import { getFriends, createGroup } from "../../actions/createGroupsAction";
 import "../../App.css";
 
 // create the Navbar Component
@@ -40,6 +41,7 @@ class CreateGroup extends Component {
       isDirectNeeded: false,
       imagePreview: undefined,
       validationErr: [],
+      message: "",
     };
     this.handleLogout = this.handleLogout.bind(this);
     this.addNewPerson = this.addNewPerson.bind(this);
@@ -161,6 +163,7 @@ class CreateGroup extends Component {
           friendsList: listings,
           friendsEmailList: response.data.userData,
         });
+        this.props.getFriends(response.data.userData);
       })
       .catch((error) => {
         console.log(error);
@@ -206,7 +209,9 @@ class CreateGroup extends Component {
             this.setState({
               isDirectNeeded: true,
               isInvalid: false,
+              message: "Group successfully created",
             });
+            this.props.createGroup(this.state.message);
           } else if (response.status === 400) {
             console.log("inside group already exists error");
             this.setState({
@@ -219,7 +224,9 @@ class CreateGroup extends Component {
           console.log("inside group already exists error");
           this.setState({
             isInvalid: true,
+            message: "Whoops! This group name already exists. Try entering another name",
           });
+          this.props.createGroup(this.state.message);
         });
     }
   }
@@ -546,12 +553,14 @@ class CreateGroup extends Component {
     );
   }
 }
-const mapStateToProps = (state) => ({ userDetails: state.login });
+const mapStateToProps = (state) => ({ userDetails: state.userReducer });
 
 function mapDispatchToProps(dispatch) {
   console.log("in dispatch");
   return {
     logout: () => dispatch(logout()),
+    createGroup: (payload) => dispatch(createGroup(payload)),
+    getFriends: ((payload) => dispatch(getFriends(payload))),
   };
 }
 

@@ -25,6 +25,9 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import { connect } from "react-redux";
 import URL_VAL from "../../backend";
+import {
+  createExpense,
+} from '../../actions/groupsAction';
 
 class AddExpense extends Component {
   constructor(props) {
@@ -72,12 +75,14 @@ class AddExpense extends Component {
             // this.props.onGroupUpdated(true);
             this.props.isGroupUpdated();
           }
+          this.props.createExpense("Expense created successfully");
         })
         .catch((error) => {
           console.log("Error in adding expense");
           this.setState({
             isInvalid: true,
           });
+          this.props.createExpense("Cannot create expense");
         });
     }
   }
@@ -208,8 +213,15 @@ class AddExpense extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({ userDetails: state.login });
+const mapStateToProps = (state) => ({ userDetails: state.userReducer });
+
+function mapDispatchToProps(dispatch) {
+  console.log("in dispatch");
+  return {
+    createExpense: (payload) => dispatch(createExpense(payload)),
+  };
+}
 
 // export default AddExpense;
 
-export default connect(mapStateToProps, null)(AddExpense);
+export default connect(mapStateToProps, mapDispatchToProps)(AddExpense);

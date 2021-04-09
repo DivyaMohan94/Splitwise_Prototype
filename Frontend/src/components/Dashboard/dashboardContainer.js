@@ -22,6 +22,7 @@ import URL_VAL from "../../backend";
 import { logout } from "../../actions/loginaction";
 import SideNav from "./sideNav";
 import SettleUp from './SettleUpModal';
+import { getDashboardDetails, getYouOweDetails, getYouAreOweDetails } from "../../actions/dashboardAction";
 
 // create the Navbar Component
 class DashboardContainer extends Component {
@@ -97,6 +98,14 @@ class DashboardContainer extends Component {
             });
           }
 
+          const payloadData = {
+            youOwe: this.state.toGiveAmt,
+            youAreOwed: this.state.toReceiveAmt,
+            totalBalance: this.state.totalBalance,
+          };
+
+          this.props.getDashboardDetails(payloadData);
+
           // Fetch Owe details
           axios.defaults.headers.common.authorization = localStorage.getItem('token');
           axios
@@ -110,6 +119,7 @@ class DashboardContainer extends Component {
               console.log("Status Code : ", youOwe.data);
               if (response.status === 200) {
                 console.log("inside success");
+                this.props.getYouOweDetails(youOwe.data);
                 this.setState({
                   youOwe: youOwe.data,
                 });
@@ -129,6 +139,7 @@ class DashboardContainer extends Component {
               console.log("Status Code : ", youAreOwed.data);
               if (response.status === 200) {
                 console.log("inside success");
+                this.props.getYouOweDetails(youAreOwed.data);
                 this.setState({
                   youAreOwed: youAreOwed.data,
                 });
@@ -438,6 +449,10 @@ class DashboardContainer extends Component {
                       {' '}
                       for
                       {' '}
+                      {data.description}
+                      {' '}
+                      in
+                      {' '}
                       {data.groupName}
                     </p>
                   </div>
@@ -497,6 +512,10 @@ class DashboardContainer extends Component {
                       {' '}
                       for
                       {' '}
+                      {data.description}
+                      {' '}
+                      in
+                      {' '}
                       {data.groupName}
                     </p>
                   </div>
@@ -514,6 +533,15 @@ class DashboardContainer extends Component {
 
 const mapStateToProps = (state) => ({ userDetails: state.login });
 
+function mapDispatchToProps(dispatch) {
+  console.log("in dispatch");
+  return {
+    getDashboardDetails: (payload) => dispatch(getDashboardDetails(payload)),
+    getYouOweDetails: (payload) => dispatch(getYouOweDetails(payload)),
+    getYouAreOweDetails: (payload) => dispatch(getYouAreOweDetails(payload)),
+  };
+}
+
 // export default DashboardContainer;
 
-export default connect(mapStateToProps, null)(DashboardContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardContainer);

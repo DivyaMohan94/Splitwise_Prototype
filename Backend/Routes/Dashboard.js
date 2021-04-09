@@ -149,7 +149,7 @@ router.put("/settleup", checkAuth, (req, res) => {
   console.log("Inside settle up");
   const payerID = mongoose.Types.ObjectId(req.body.payerID);
   const recipientID = mongoose.Types.ObjectId(req.body.recipientID);
-  Split.updateOne(
+  Split.updateMany(
     {
       userID: payerID,
       oweToID: recipientID,

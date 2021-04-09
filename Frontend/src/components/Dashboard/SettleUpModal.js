@@ -16,7 +16,9 @@ import {
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
+import { connect } from "react-redux";
 import URL_VAL from "../../backend";
+import { settleUp } from "../../actions/dashboardAction";
 
 class SettleUp extends Component {
   constructor(props) {
@@ -85,6 +87,7 @@ class SettleUp extends Component {
             this.props.onHide();
             this.props.onSettleUpClicked();
           }
+          this.props.settleUp("Settled up the balances");
         })
         .catch((error) => {
           console.log("Error in settle up");
@@ -259,4 +262,13 @@ class SettleUp extends Component {
   }
 }
 
-export default SettleUp;
+function mapDispatchToProps(dispatch) {
+  console.log("in dispatch");
+  return {
+    settleUp: (payload) => dispatch(settleUp(payload)),
+  };
+}
+
+// export default SettleUp;
+
+export default connect(null, mapDispatchToProps)(SettleUp);

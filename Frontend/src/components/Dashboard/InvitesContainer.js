@@ -26,6 +26,7 @@ import { connect } from "react-redux";
 import URL_VAL from "../../backend";
 import { logout } from "../../actions/loginaction";
 import SideNav from "./sideNav";
+import { inviteAccepted } from '../../actions/myGroupsAction';
 
 // create the Navbar Component
 class InvitesContainer extends Component {
@@ -180,4 +181,13 @@ class InvitesContainer extends Component {
   }
 }
 
-export default InvitesContainer;
+function mapDispatchToProps(dispatch) {
+  console.log("in dispatch");
+  return {
+    inviteAccepted: (payload) => dispatch(inviteAccepted(payload)),
+  };
+}
+
+// export default InvitesContainer;
+
+export default connect(null, mapDispatchToProps)(InvitesContainer);

@@ -43,6 +43,7 @@ class RecentActivity extends Component {
   componentDidMount() {
     console.log("inside component did mount of Recent Activity");
     const data = localStorage.getItem('userID');
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/recent`, {
         params: {
@@ -73,6 +74,7 @@ class RecentActivity extends Component {
       });
 
     // get groups drop down values
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/recent/groupsDropdown`, {
         params: {
@@ -106,6 +108,7 @@ class RecentActivity extends Component {
       selectedGroup: optionElement.value,
     });
     const data = localStorage.getItem('userID');
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/recent/filterGroup`, {
         params: {
@@ -211,7 +214,7 @@ class RecentActivity extends Component {
         <Row>
           <Col md={1} />
           <Col md={10}>
-            {isDataPresent && recentActivity.map((item) => {
+            {isDataPresent && recentActivity.map((item, index) => {
               let message = "";
               const date = item.createdOn.slice(0, 10);
               let status = "";

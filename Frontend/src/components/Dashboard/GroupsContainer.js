@@ -29,7 +29,9 @@ import numeral from 'numeral';
 import swal from 'sweetalert';
 import avatar from "../Images/avatar.png";
 import URL_VAL from "../../backend";
-import { logout } from "../../actions/loginaction";
+import {
+  addNotes, getSplitData, getTransactionData, deleteNotes,
+} from '../../actions/groupsAction';
 import SideNav from "./sideNav";
 import AddExpense from './AddExpenseModal';
 
@@ -88,6 +90,7 @@ class GroupsContainer extends Component {
             });
           }
         }
+        this.props.getTransactionData(response.data);
       });
 
     // Download image
@@ -128,6 +131,7 @@ class GroupsContainer extends Component {
               });
             }
           }
+          this.props.getTransactionData(response.data);
         });
     }
   }
@@ -188,6 +192,7 @@ class GroupsContainer extends Component {
             transactionData: response.data,
           });
         }
+        this.props.getSplitData(response.data);
       });
   }
 
@@ -262,10 +267,12 @@ class GroupsContainer extends Component {
               note: "",
             });
           }
+          this.props.addNotes("Notes added successfully");
         })
         .catch((error) => {
           console.log(error);
         });
+      this.props.addNotes("Cannot add notes");
     }
   }
 
@@ -289,10 +296,12 @@ class GroupsContainer extends Component {
             isGroupUpdated: true,
           });
         }
+        this.props.deleteNotes("Notes deleted successfully");
       })
       .catch((error) => {
         console.log(error);
       });
+    this.props.deleteNotes("Cannot delete notes");
   }
 
   render() {
@@ -606,8 +615,18 @@ class GroupsContainer extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({ userDetails: state.login });
+const mapStateToProps = (state) => ({ userDetails: state.userReducer });
+
+function mapDispatchToProps(dispatch) {
+  console.log("in dispatch");
+  return {
+    addNotes: (payload) => dispatch(addNotes(payload)),
+    getSplitData: (payload) => dispatch(getSplitData(payload)),
+    getTransactionData: (payload) => dispatch(getTransactionData(payload)),
+    deleteNotes: (payload) => dispatch(deleteNotes(payload)),
+  };
+}
 
 // export default GroupsContainer;
 
-export default connect(mapStateToProps, null)(GroupsContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(GroupsContainer);
