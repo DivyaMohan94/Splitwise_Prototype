@@ -141,7 +141,7 @@ class CreateGroup extends Component {
   }
 
   suggestFriends() {
-    const data = this.props.userDetails.userID;
+    const data = this.props.userID;
     axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/creategroup/getFriends`, {
@@ -156,14 +156,14 @@ class CreateGroup extends Component {
         if (response.status === 200) {
           console.log("inside success");
 
-          response.data.userData.map((item) => listings.push(item.userName));
+          response.data.data.map((item) => listings.push(item.userName));
         }
         console.log(`listings ${listings}`);
         this.setState({
           friendsList: listings,
-          friendsEmailList: response.data.userData,
+          friendsEmailList: response.data.data,
         });
-        this.props.getFriends(response.data.userData);
+        this.props.getFriends(response.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -348,7 +348,7 @@ class CreateGroup extends Component {
   render() {
     // redirect to group page
     console.log("Create group render called");
-    console.log(`map to props ${this.props.userDetails.userName}`);
+    console.log(`map to props ${this.props.userName}`);
     let redirectVar = null;
     let errMsg = "";
     let validationErr = "";
@@ -472,12 +472,12 @@ class CreateGroup extends Component {
                 </Form.Label>
                 <Form.Group>
                   <Form.Label>
-                    {this.props.userDetails.userName}
+                    {this.props.userName}
                     {'  '}
                   </Form.Label>
                   <Form.Label>
                     (
-                    {this.props.userDetails.emailID}
+                    {this.props.emailID}
                     )
                   </Form.Label>
                 </Form.Group>
@@ -553,7 +553,26 @@ class CreateGroup extends Component {
     );
   }
 }
-const mapStateToProps = (state) => ({ userDetails: state.userReducer });
+// const mapStateToProps = (state) => ({ userDetails: state.userReducer });
+
+const mapStateToProps = (state) => {
+  console.log("checking:", state);
+  if (state.userReducer !== undefined) {
+    return {
+      userID: state.userReducer._id,
+      emailID: state.userReducer.emailID,
+      userName: state.userReducer.userName,
+      currency: state.userReducer.currency,
+    };
+  }
+
+  return {
+    userID: "",
+    emailID: "",
+    userName: "",
+    currency: "",
+  };
+};
 
 function mapDispatchToProps(dispatch) {
   console.log("in dispatch");

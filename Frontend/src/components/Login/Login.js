@@ -260,12 +260,14 @@ class Login extends Component {
 const mapStateToProps = (state, ownProps) => {
   console.log("state customer login reducer:", state);
   // console.log("ownprops:", ownProps);
-  return {
-    userID: state.userReducer._id,
-    emailID: state.userReducer.emailID,
-    userName: state.userReducer.userName,
-    currency: state.userReducer.currency,
-  };
+  if (state.userReducer !== undefined) {
+    return {
+      userID: state.userReducer._id,
+      emailID: state.userReducer.emailID,
+      userName: state.userReducer.userName,
+      currency: state.userReducer.currency,
+    };
+  }
 };
 
 function mapDispatchToProps(dispatch) {

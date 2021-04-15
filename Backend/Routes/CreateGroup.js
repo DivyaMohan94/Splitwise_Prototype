@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const Users = require('../Models/UserModel');
 const GroupDetails = require('../Models/GroupDetailsModel');
 const { checkAuth } = require("../Util/passport");
+const kafka = require('../kafka/client');
 
 const router = express.Router();
 
@@ -130,17 +131,16 @@ router.post("/", checkAuth, (req, res) => {
 });
 
 router.get("/getFriends", checkAuth, (req, res) => {
-  console.log("Inside get friends list");
-  Users.find({}, { userName: 1, emailID: 1, _id: 1 }, (userErr, userData) => {
-    if (userErr) {
+  kafka.make_request('getFriends', req, (err, data) => {
+    if (err) {
       console.log('Cannot fetch user details');
       res.writeHead(400, {
         'context-type': 'text/plain',
       });
       res.end('Cannot fetch Email IDs');
     } else {
-      console.log(userData);
-      res.status(200).json({ userData });
+      console.log(data);
+      res.status(200).json({ data });
     }
   });
 });
