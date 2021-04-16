@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const Users = require('../models/UserModel');
 
 const handle_request = async (msg, callback) => {
-  console.log("Service - get user profile : ", msg);
+  console.log("Service - get user profile : ");
   const userID = mongoose.Types.ObjectId(msg.query.userID);
   Users.findOne({ _id: userID }, (error, data) => {
     if (error) {

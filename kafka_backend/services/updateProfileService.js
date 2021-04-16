@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const Users = require('../models/UserModel');
 
 const handle_request = async (msg, callback) => {
-  console.log("Service - update customer profile : ", msg);
+  console.log("Service - update customer profile : ");
   const userID = mongoose.Types.ObjectId(msg.body.userID);
   Users.updateOne(
     {

@@ -5,7 +5,7 @@
 const Users = require('../models/UserModel');
 
 const handle_request = async (msg, callback) => {
-  console.log("Service - get friends details: ", msg);
+  console.log("Service - get friends details: ");
   Users.find({}, { userName: 1, emailID: 1, _id: 1 }, (userErr, userData) => {
     if (userErr) {
       console.log("Unable to get friends details", userErr);

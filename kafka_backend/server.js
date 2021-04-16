@@ -16,9 +16,9 @@ function handleTopicRequest(topic_name, fname) {
   consumer.on('message', (message) => {
     console.log(`\n\n message received for ${topic_name} `, fname);
     // console.log(JSON.stringify(message.value));
-    console.log('message val', message.value);
+    // console.log('message val', message.value);
     const data = JSON.parse(message.value);
-    console.log('checking data', data);
+    // console.log('checking data', data);
 
     fname.handle_request(data.data, (err, res) => {
       console.log(`after handle${res}`);
