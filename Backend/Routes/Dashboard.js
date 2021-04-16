@@ -1,145 +1,51 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const Split = require('../Models/Split');
+// const mongoose = require('mongoose');
+// const Split = require('../Models/Split');
 const { checkAuth } = require("../Util/passport");
+const kafka = require('../kafka/client');
 
 const router = express.Router();
 
 router.get("/", checkAuth, (req, res) => {
-  const toReceiveVal = [];
-  const toGiveVal = [];
-  const dashboardData = {
-    toReceiveVal,
-    toGiveVal,
-  };
-  const userID = mongoose.Types.ObjectId(req.query.UserID);
-  console.log('userID', req.query.UserID);
-  Split.aggregate([
-    { $match: { oweToID: userID, paymentStatus: 'unpaid' } },
-    {
-      $group: {
-        _id: null,
-        total: {
-          $sum: "$splitAmount",
-        },
-      },
-    },
-  ],
-  (error, data) => {
-    if (error) {
+  console.log("Inside get dashboard details");
+  kafka.make_request('getDashboardDetails', req, (err, data) => {
+    if (err) {
       res.writeHead(400, {
         "content-type": "text/plain",
       });
-      res.end("Cannot fetch transaction details");
+      res.end("Cannot fetch recent details");
     } else {
-      if (data.length > 0) {
-        console.log("Fetching result", JSON.stringify((data[0].total)));
-        toReceiveVal.push(JSON.stringify((data[0].total)));
-      }
-
-      Split.aggregate([
-        { $match: { userID, paymentStatus: 'unpaid' } },
-        {
-          $group: {
-            _id: null,
-            total: {
-              $sum: "$splitAmount",
-            },
-          },
-        },
-      ],
-      (toGiveError, toGiveData) => {
-        if (toGiveError) {
-          res.writeHead(400, {
-            "content-type": "text/plain",
-          });
-          res.end("Cannot fetch transaction details");
-        } else {
-          if (toGiveData.length > 0) {
-            console.log("Fetching result", JSON.stringify((toGiveData)));
-            toGiveVal.push(JSON.stringify((toGiveData[0].total)));
-          }
-          console.log('dashboard data', dashboardData);
-          res.end(JSON.stringify(dashboardData));
-        }
-      });
+      console.log('fetching dashboard details');
+      res.end(JSON.stringify(data));
     }
   });
 });
 
 router.get("/AllYouOwe", checkAuth, (req, res) => {
   console.log("Inside get owe");
-  const UserID = mongoose.Types.ObjectId(req.query.UserID);
-  Split.aggregate([
-    { $match: { userID: UserID, paymentStatus: 'unpaid' } },
-    {
-      $lookup: {
-        from: "users",
-        localField: "userID",
-        foreignField: "_id",
-        as: "defaulter",
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "oweToID",
-        foreignField: "_id",
-        as: "owner",
-      },
-    },
-  ],
-  (error, data) => {
-    if (error) {
+  kafka.make_request('getAllYouOwe', req, (err, data) => {
+    if (err) {
       res.writeHead(400, {
         "content-type": "text/plain",
       });
-      res.end("Cannot fetch transaction details");
+      res.end("Cannot fetch recent details");
     } else {
-      console.log('dashboard data', data);
+      console.log('fetching All you owe details');
       res.end(JSON.stringify(data));
     }
   });
 });
 
 router.get("/AllYouAreOwed", checkAuth, (req, res) => {
-  console.log("Inside get owed");
-  const UserID = mongoose.Types.ObjectId(req.query.UserID);
-  Split.aggregate([
-    { $match: { oweToID: UserID, paymentStatus: 'unpaid' } },
-    // {
-    //   $group: {
-    //     _id: null,
-    //     total: {
-    //       $sum: "$splitAmount",
-    //     },
-    //   },
-    // },
-    {
-      $lookup: {
-        from: "users",
-        localField: "userID",
-        foreignField: "_id",
-        as: "defaulter",
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "oweToID",
-        foreignField: "_id",
-        as: "owner",
-      },
-    },
-  ],
-  (error, data) => {
-    if (error) {
+  console.log("Inside get oall you owed");
+  kafka.make_request('getAllYouAreOwed', req, (err, data) => {
+    if (err) {
       res.writeHead(400, {
         "content-type": "text/plain",
       });
-      res.end("Cannot fetch transaction details");
+      res.end("Cannot fetch recent details");
     } else {
-      console.log('dashboard data', data);
+      console.log('fetching All you are owed details');
       res.end(JSON.stringify(data));
     }
   });
@@ -147,30 +53,16 @@ router.get("/AllYouAreOwed", checkAuth, (req, res) => {
 
 router.put("/settleup", checkAuth, (req, res) => {
   console.log("Inside settle up");
-  const payerID = mongoose.Types.ObjectId(req.body.payerID);
-  const recipientID = mongoose.Types.ObjectId(req.body.recipientID);
-  Split.updateMany(
-    {
-      userID: payerID,
-      oweToID: recipientID,
-    },
-    {
-      $set: {
-        paymentStatus: 'paid',
-        updatedOn: new Date(),
-      },
-    },
-    (error, data) => {
-      if (error) {
-        res.writeHead(400, {
-          "content-type": "text/plain",
-        });
-        res.end("Cannot settle up");
-      } else {
-        console.log(data);
-        res.end(JSON.stringify(data));
-      }
-    },
-  );
+  kafka.make_request('settleUp', req, (err, data) => {
+    if (err) {
+      res.writeHead(400, {
+        "content-type": "text/plain",
+      });
+      res.end("Cannot settle up");
+    } else {
+      console.log('settled up');
+      res.end(JSON.stringify(data));
+    }
+  });
 });
 module.exports = router;
