@@ -267,12 +267,14 @@ class SignUp extends Component {
 }
 const mapStateToProps = (state) => {
   console.log("state customer signup reducer:", state);
-  return {
-    userID: state.userReducer._id,
-    emailID: state.userReducer.emailID,
-    userName: state.userReducer.userName,
-    currency: state.userReducer.currency,
-  };
+  if (state.userReducer !== undefined) {
+    return {
+      userID: state.userReducer._id,
+      emailID: state.userReducer.emailID,
+      userName: state.userReducer.userName,
+      currency: state.userReducer.currency,
+    };
+  }
 };
 
 // function mapDispatchToProps(dispatch) {
