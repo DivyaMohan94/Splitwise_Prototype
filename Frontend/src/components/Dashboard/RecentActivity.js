@@ -35,7 +35,7 @@ class RecentActivity extends Component {
       isDataPresent: false,
       selectedGroup: "",
       selectedSort: "Most recent first",
-      recentActivityDesc: {},
+      isMostRecentFirst: true,
 
       // pagination
       offset: 0,
@@ -69,8 +69,6 @@ class RecentActivity extends Component {
           if (response.data.length > 0) {
             this.setState({
               recentActivity: response.data,
-              recentActivityDesc: response.data,
-              // sortedActivities: response.data.reverse(),
               isDataPresent: true,
             });
             this.applyPagination();
@@ -156,10 +154,14 @@ class RecentActivity extends Component {
         if (response.status === 200) {
           console.log("inside success");
           // if (response.data.length > 0) {
+          if (this.state.isMostRecentFirst === false) {
+            response.data = response.data.sort((a, b) => a - b).reverse();
+          }
           this.setState({
             recentActivity: response.data,
-            recentActivityDesc: response.data,
-            // sortedActivities: response.data.reverse(),
+            currentPage: 0,
+            offset: 0,
+            isPerPageChanged: true,
           });
           // }
           if (response.data.length > 0) {
@@ -188,6 +190,7 @@ class RecentActivity extends Component {
         isPerPageChanged: true,
         currentPage: 0,
         offset: 0,
+        isMostRecentFirst: true,
       });
       console.log('inside des');
     } else {
@@ -198,6 +201,7 @@ class RecentActivity extends Component {
         isPerPageChanged: true,
         currentPage: 0,
         offset: 0,
+        isMostRecentFirst: false,
       });
       console.log(e.target.selectedIndex);
       console.log('inside asc');
@@ -272,12 +276,12 @@ class RecentActivity extends Component {
             {/* )} */}
           </Col>
           <Col md={3}>
-            {/* {isDataPresent && ( */}
+            {isDataPresent && (
             <Form.Control as="select" onChange={this.onSortChange} defaultValue={this.state.selectedSort}>
               <option id="1">Most recent first</option>
               <option id="2">Most recent last</option>
             </Form.Control>
-            {/* )} */}
+            )}
           </Col>
         </Row>
         <Row>
@@ -423,6 +427,8 @@ class RecentActivity extends Component {
             })}
           </Col>
         </Row>
+        {isDataPresent
+        && (
         <Row style={{ marginTop: '20px' }}>
           <Col md="6" />
           <Col md="auto" style={{ marginTop: '12px' }}>
@@ -453,6 +459,7 @@ class RecentActivity extends Component {
             </div>
           </Col>
         </Row>
+        )}
       </Container>
     );
   }
