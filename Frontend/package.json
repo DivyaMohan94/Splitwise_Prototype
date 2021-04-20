@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@testing-library/react": "^11.2.6",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "eslint": "^7.20.0",

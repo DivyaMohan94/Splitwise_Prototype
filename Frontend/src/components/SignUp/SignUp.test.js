@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
+import { screen } from '@testing-library/react';
 import Signup from './Signup';
 
 const mockStore = configureMockStore();

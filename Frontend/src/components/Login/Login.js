@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
@@ -266,6 +267,13 @@ const mapStateToProps = (state, ownProps) => {
       emailID: state.userReducer.emailID,
       userName: state.userReducer.userName,
       currency: state.userReducer.currency,
+    };
+  } else {
+    return {
+      userID: -1,
+      emailID: "",
+      userName: "",
+      currency: "",
     };
   }
 };

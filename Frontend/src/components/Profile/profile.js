@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
@@ -567,18 +568,33 @@ class Profile extends Component {
 const mapStateToProps = (state, ownProps) => {
   console.log("Accessing store:", state);
   // console.log("ownprops:", ownProps);
-  return {
-    userID: state.userReducer._id,
-    emailID: state.userReducer.emailID,
-    userName: state.userReducer.userName,
-    currency: state.userReducer.currency,
-    phoneNum: state.userReducer.phoneNum,
-    countryCode: state.userReducer.countryCode,
-    timeZone: state.userReducer.timeZone,
-    createdAt: state.userReducer.createdAt,
-    language: state.userReducer.language,
-    image: state.userReducer.image,
-  };
+  if (state.userReducer != undefined) {
+    return {
+      userID: state.userReducer._id,
+      emailID: state.userReducer.emailID,
+      userName: state.userReducer.userName,
+      currency: state.userReducer.currency,
+      phoneNum: state.userReducer.phoneNum,
+      countryCode: state.userReducer.countryCode,
+      timeZone: state.userReducer.timeZone,
+      createdAt: state.userReducer.createdAt,
+      language: state.userReducer.language,
+      image: state.userReducer.image,
+    };
+  } else {
+    return {
+      userID: -1,
+      emailID: "",
+      userName: "",
+      currency: "",
+      phoneNum: "",
+      countryCode: "",
+      timeZone: "",
+      createdAt: "",
+      language: "",
+      image: "",
+    };
+  }
 };
 // export default Profile;
 
