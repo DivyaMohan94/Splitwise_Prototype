@@ -27,6 +27,8 @@ const deleteNotes = require('./services/deleteNotesService');
 const addExpense = require('./services/addExpenseService');
 const login = require('./services/loginService');
 const signUp = require('./services/signUpService');
+const changeGroupName = require('./services/changeGroupName');
+const changeGroupImage = require('./services/changeGroupImage');
 
 function handleTopicRequest(topic_name, fname) {
   // var topic_name = 'root_topic';
@@ -102,3 +104,5 @@ handleTopicRequest("deleteNotes", deleteNotes);
 handleTopicRequest("addExpense", addExpense);
 handleTopicRequest("login", login);
 handleTopicRequest("signUp", signUp);
+handleTopicRequest("changeGroupName", changeGroupName);
+handleTopicRequest("changeGroupImage", changeGroupImage);

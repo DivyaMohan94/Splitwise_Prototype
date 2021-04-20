@@ -27,6 +27,7 @@
     "redux-devtools-extension": "^2.13.8",
     "save-dev": "0.0.1-security",
     "sweetalert": "^2.1.2",
+    "sweetalert2": "^10.16.4",
     "thunk": "0.0.1"
   },
   "scripts": {

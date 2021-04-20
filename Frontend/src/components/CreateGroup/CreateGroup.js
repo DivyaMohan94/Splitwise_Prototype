@@ -267,14 +267,14 @@ class CreateGroup extends Component {
       console.log(target.files);
       const profilePhoto = target.files[0];
       const data = new FormData();
-      data.append('photos', profilePhoto);
+      data.append('image', profilePhoto);
       axios.defaults.headers.common.authorization = localStorage.getItem('token');
-      axios.post(`${URL_VAL}/creategroup/upload-file`, data)
+      axios.post(`${URL_VAL}/profile/upload-file`, data)
         .then((response) => {
           if (response.status === 200) {
             // Download image
             axios.defaults.headers.common.authorization = localStorage.getItem('token');
-            axios.post(`${URL_VAL}/creategroup/getImage/${profilePhoto.name}`)
+            axios.post(`${URL_VAL}/profile/getImage/${profilePhoto.name}`)
               .then((res) => {
                 const imagePreview = `data:image/jpg;base64, ${res.data}`;
                 this.setState({

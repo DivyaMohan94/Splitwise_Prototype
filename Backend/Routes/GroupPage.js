@@ -175,42 +175,44 @@ router.post("/deleteNotes", checkAuth, (req, res) => {
   });
 });
 
-// router.put("/changeImage", (req, res) => {
-//   connection.getConnection((err, conn) => {
-//     if (err) {
-//       console.log('Cannot connect to database');
-//       console.log(err);
-//       throw err;
-//     } else {
-//       console.log('Connection111 successful');
-//       console.log("Inside change image");
-//       console.log("Req Body : ", req.body);
-//       const { Image } = req.body;
-//       const { GroupID } = req.body;
+router.post("/changeGroupName", checkAuth, (req, res) => {
+  console.log("Inside change group name");
+  kafka.make_request('changeGroupName', req, (err, data) => {
+    if (err) {
+      res.writeHead(400, {
+        "content-type": "text/plain",
+      });
+      res.end("Cannot change group name");
+    } else if (data.status === 400) {
+      res.writeHead(400, {
+        "content-type": "text/plain",
+      });
+      res.end("Cannot change group name");
+    } else {
+      console.log('Successfully changed group name');
+      res.end(JSON.stringify(data));
+    }
+  });
+});
 
-//       const imageUpdate = `UPDATE GroupDetails
-//   SET Image = ${mysql.escape(Image)}
-//   WHERE GroupID = ${mysql.escape(GroupID)}`;
-
-//       console.log(imageUpdate);
-
-//       conn.query(imageUpdate, (error, data) => {
-//         if (error) {
-//           res.writeHead(400, {
-//             "content-type": "text/plain",
-//           });
-//           res.end("Sql error");
-//         } else {
-//           console.log(data);
-//           res.writeHead(200, {
-//             "Content-type": "application/json",
-//           });
-//           res.end(JSON.stringify(data));
-//           conn.release();
-//         }
-//       });
-//     }
-//   });
-// });
+router.put("/changeGroupImage", (req, res) => {
+  console.log("Inside change group picture");
+  kafka.make_request('changeGroupImage', req, (err, data) => {
+    if (err) {
+      res.writeHead(400, {
+        "content-type": "text/plain",
+      });
+      res.end("Cannot change group pic");
+    } else if (data.status === 400) {
+      res.writeHead(400, {
+        "content-type": "text/plain",
+      });
+      res.end("Cannot change group pic");
+    } else {
+      console.log('Successfully changed group pic');
+      res.end(JSON.stringify(data));
+    }
+  });
+});
 
 module.exports = router;

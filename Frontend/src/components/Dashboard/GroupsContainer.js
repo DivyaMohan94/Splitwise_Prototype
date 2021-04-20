@@ -27,6 +27,7 @@ import Form from "react-bootstrap/Form";
 import { connect } from "react-redux";
 import numeral from 'numeral';
 import swal from 'sweetalert';
+import Swal from 'sweetalert2';
 import avatar from "../Images/avatar.png";
 import URL_VAL from "../../backend";
 import {
@@ -47,11 +48,12 @@ class GroupsContainer extends Component {
       transactionData: {},
       modal: false,
       isGroupUpdated: false,
-      groupImage: this.props.groupImage,
+      groupImage: "",
       imagePreview: undefined,
       isImageUpdated: false,
-      isGroupNameUpdated: false,
+      isGroupNamevalid: false,
       showImageSuccess: false,
+      showNameChangeAlert: false,
       note: "",
     };
     this.OnTransactionClick = this.OnTransactionClick.bind(this);
@@ -65,6 +67,7 @@ class GroupsContainer extends Component {
     this.onPostClicked = this.onPostClicked.bind(this);
     this.onNotesChange = this.onNotesChange.bind(this);
     this.onDeleteClicked = this.onDeleteClicked.bind(this);
+    this.OnChangeGroupName = this.OnChangeGroupName.bind(this);
   }
 
   componentDidMount() {
@@ -92,11 +95,21 @@ class GroupsContainer extends Component {
         }
         this.props.getTransactionData(response.data);
       });
-
+    let groupImageName = "";
+    this.props.groupDetails.map((val) => {
+      if (val._id == this.props.groupID) {
+        console.log('inside map comparison', val.image);
+        groupImageName = val.image;
+        this.setState({
+          groupImage: val.image,
+        });
+      }
+    });
     // Download image
-    if (this.state.groupImage) {
+    console.log('group image name', this.state.groupImage);
+    if (groupImageName) {
       axios.defaults.headers.common.authorization = localStorage.getItem('token');
-      axios.post(`${URL_VAL}/profile/getImage/${this.state.groupImage}`)
+      axios.post(`${URL_VAL}/profile/getImage/${groupImageName}`)
         .then((res) => {
           const imagePreview = `data:image/jpg;base64, ${res.data}`;
           this.setState({
@@ -133,6 +146,17 @@ class GroupsContainer extends Component {
           }
           this.props.getTransactionData(response.data);
         });
+
+      if (this.state.groupImage) {
+        axios.defaults.headers.common.authorization = localStorage.getItem('token');
+        axios.post(`${URL_VAL}/profile/getImage/${this.state.groupImage}`)
+          .then((res) => {
+            const imagePreview = `data:image/jpg;base64, ${res.data}`;
+            this.setState({
+              imagePreview,
+            });
+          });
+      }
     }
   }
 
@@ -146,7 +170,7 @@ class GroupsContainer extends Component {
       console.log(target.files);
       const profilePhoto = target.files[0];
       const data = new FormData();
-      data.append('photos', profilePhoto);
+      data.append('image', profilePhoto);
       axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios.post(`${URL_VAL}/profile/upload-file`, data)
         .then((response) => {
@@ -199,12 +223,12 @@ class GroupsContainer extends Component {
   OnChangeImageClick(e) {
     console.log("inside change image");
     const data = {
-      Image: this.state.groupImage,
-      GroupID: this.props.groupID,
+      image: this.state.groupImage,
+      groupID: this.props.groupID,
     };
     axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
-      .put(`${URL_VAL}/group/changeImage`, data)
+      .put(`${URL_VAL}/group/changeGroupImage`, data)
       .then((response) => {
         console.log("Status Code : ", response.status);
         console.log("Status Code : ", response.data);
@@ -215,9 +239,55 @@ class GroupsContainer extends Component {
             showImageSuccess: true,
           });
 
-          this.props.onGroupImageChanged(this.state.groupImage);
+          // this.props.onGroupImageChanged(this.state.groupImage);
           this.onGroupUpdated();
+          this.props.onGroupNameChange();
         }
+      })
+      .catch((error) => {
+        console.log("cannot update image", error);
+      });
+  }
+
+  OnChangeGroupName(newGroupName) {
+    console.log("inside change group name", newGroupName);
+    const data = {
+      groupName: newGroupName,
+      createdBy: localStorage.getItem('userID'),
+      groupID: this.props.groupID,
+    };
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
+    // make a post request with the user data
+    axios
+      .post(`${URL_VAL}/group/changeGroupName`, data)
+      .then((response) => {
+        console.log("Status Code : ", response.status);
+        console.log("Status Code : ", response.data);
+        if (response.status === 200) {
+          console.log("inside group name update success");
+          this.setState({
+            groupName: newGroupName,
+            isGroupNamevalid: true,
+            isGroupUpdated: true,
+            showNameChangeAlert: true,
+          });
+          this.props.onGroupNameChange();
+        } else if (response.status === 400) {
+          console.log("inside group already exists error");
+          this.setState({
+            isGroupNamevalid: false,
+            isGroupUpdated: false,
+            showNameChangeAlert: true,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log("inside group already exists error");
+        this.setState({
+          isGroupNamevalid: false,
+          isGroupUpdated: false,
+          showNameChangeAlert: true,
+        });
       });
   }
 
@@ -240,6 +310,7 @@ class GroupsContainer extends Component {
   setShow(e) {
     this.setState({
       showImageSuccess: false,
+      showNameChangeAlert: false,
     });
   }
 
@@ -305,11 +376,13 @@ class GroupsContainer extends Component {
   }
 
   render() {
+    console.log('imagepriv', this.state.imagePreview);
     const noDataMsg = "You have not added any expense yet";
+    const groupInvalidMsg = "Whoops! This group name already exists. Try entering another name";
     const { groupDetails } = this.state;
     const { isDataPresent } = this.state;
     const { userID } = this.state;
-    const { transactionData } = this.state;
+    const { transactionData, isGroupNamevalid } = this.state;
     const currencyType = this.props.userDetails.currency;
     let date;
     let lentString = "";
@@ -320,7 +393,7 @@ class GroupsContainer extends Component {
         alt="SplitWise"
         width="50"
         height="50"
-
+        className="circle"
       />
     );
 
@@ -331,6 +404,7 @@ class GroupsContainer extends Component {
           alt="groupPic"
           width="50"
           height="50"
+          className="circle"
         />
       );
     }
@@ -351,15 +425,15 @@ class GroupsContainer extends Component {
             <Row>
               <Col md="auto">
                 <div style={{ display: "flex" }}>
-                  <span style={{ marginRight: "10px" }}>
-                    {groupPic}
-                  </span>
-                  <h4 style={{ fontWeight: "600", fontSize: "24px" }}>{this.state.groupName}</h4>
+                  <span style={{ marginRight: "10px" }}>{groupPic}</span>
+                  <h4 style={{ fontWeight: "600", fontSize: "24px", marginTop: "10px" }}>
+                    {this.state.groupName}
+                  </h4>
                 </div>
               </Col>
             </Row>
 
-            {/* <Row>
+            <Row>
               <Col>
                 <input
                   id="avatar"
@@ -369,7 +443,7 @@ class GroupsContainer extends Component {
                   onChange={this.handleChange}
                 />
               </Col>
-            </Row> */}
+            </Row>
           </Col>
 
           {/* <Col md="auto">
@@ -401,109 +475,162 @@ class GroupsContainer extends Component {
           <Col md="auto">
             <Button onClick={this.OnChangeImageClick}>Change image</Button>
           </Col>
+          <Col md="auto">
+            <Button
+              onClick={(e) => (async () => {
+                const { value: text } = await Swal.fire({
+                  title: 'Enter new group name',
+                  input: 'text',
+                  inputLabel: 'Group Name',
+                  showCancelButton: true,
+                  inputValidator: (value) => {
+                    if (!value) {
+                      return 'Please enter a valid group name!';
+                    // eslint-disable-next-line no-else-return
+                    } else {
+                      this.OnChangeGroupName(value);
+                    }
+                  },
+                });
+              })()}
+            >
+              Change group name
+            </Button>
+          </Col>
         </Row>
-        {(this.state.isImageUpdated && this.state.showImageSuccess) && (
-          <Alert variant="success" transition={false} onClose={() => this.setShow()} dismissible>
-            Group picture has been successfully updated
-          </Alert>
-        )}
+        <Row style={{ marginTop: "5px" }}>
+          <Col>
+            {this.state.isImageUpdated && this.state.showImageSuccess && (
+            <Alert
+              variant="success"
+              transition={false}
+              onClose={() => this.setShow()}
+              dismissible
+            >
+              Group picture has been successfully updated
+            </Alert>
+            )}
+            {isGroupNamevalid && this.state.showNameChangeAlert && (
+            <Alert
+              variant="success"
+              transition={false}
+              onClose={() => this.setShow()}
+              dismissible
+            >
+              Group name has been successfully updated
+            </Alert>
+            )}
+            {!isGroupNamevalid && this.state.showNameChangeAlert && (
+            <Alert
+              variant="danger"
+              transition={false}
+              onClose={() => this.setShow()}
+              dismissible
+            >
+              Whoops! This group name already exists. Try entering another name
+            </Alert>
+            )}
+          </Col>
+        </Row>
         <Row style={{ marginTop: "12px" }}>
           <Col md={12}>
             {!isDataPresent && <h5>{noDataMsg}</h5>}
-            {isDataPresent
-              && (
+            {isDataPresent && (
               <Accordion>
-                {
-              groupDetails.map((val, idx) => {
-                const eventKey = idx.toString();
-                if (groupDetails[idx].createdOn != undefined) {
-                  date = groupDetails[idx].createdOn.slice(0, 10);
-                }
+                {groupDetails.map((val, idx) => {
+                  const eventKey = idx.toString();
+                  if (groupDetails[idx].createdOn != undefined) {
+                    date = groupDetails[idx].createdOn.slice(0, 10);
+                  }
 
-                let ownerName = "";
-                if (groupDetails[idx].createdBy == groupDetails[idx].user._id) {
-                  ownerName = "you";
-                } else {
-                  ownerName = groupDetails[idx].user.userName;
-                }
-                const payedStr = `${ownerName} paid ${currencyType} ${numeral(groupDetails[idx].totalAmount).format('0, 0.00')}`;
-                if (groupDetails[idx].lentAmount != undefined) {
-                  lentString = `${ownerName} lent ${currencyType} ${numeral(groupDetails[idx].lentAmount).format('0, 0.00')}`;
-                }
+                  let ownerName = "";
+                  if (
+                    groupDetails[idx].createdBy == groupDetails[idx].user._id
+                  ) {
+                    ownerName = "you";
+                  } else {
+                    ownerName = groupDetails[idx].user.userName;
+                  }
+                  const payedStr = `${ownerName} paid ${currencyType} ${numeral(
+                    groupDetails[idx].totalAmount,
+                  ).format("0, 0.00")}`;
+                  if (groupDetails[idx].lentAmount != undefined) {
+                    lentString = `${ownerName} lent ${currencyType} ${numeral(
+                      groupDetails[idx].lentAmount,
+                    ).format("0, 0.00")}`;
+                  }
 
-                return (
-                // <Accordion>
-                  <Card>
-                    <Accordion.Toggle
-                      as={Card.Header}
-                      eventKey={eventKey}
+                  return (
+                    // <Accordion>
+                    <Card>
+                      <Accordion.Toggle
+                        as={Card.Header}
+                        eventKey={eventKey}
                         // id={groupDetails[idx]._id}
-                      onClick={() => this.OnTransactionClick(
-                        groupDetails[idx]._id,
-                      )}
-                    >
-                      <Row>
-                        <Col md="auto">{date}</Col>
-                        <Col md="auto">
-                          <img
-                            src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/uncategorized/general@2x.png"
-                            alt="receipt"
-                            style={{ height: "45px", width: "45px" }}
-                          />
-                        </Col>
-                        <Col>
-                          <h6>
-                            <b>{groupDetails[idx].description}</b>
-                          </h6>
-                        </Col>
-                        <Col md={3} />
-                        <Col>{payedStr}</Col>
-                        <Col>{lentString}</Col>
-                      </Row>
-                    </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={eventKey}>
-                      <Card.Body>
-                        {/* {this.state.TransactionStr} */}
-
-                        {/* <div>{payedStr}</div> */}
+                        onClick={() => this.OnTransactionClick(groupDetails[idx]._id)}
+                      >
                         <Row>
-                          <Col md={2}>
+                          <Col md="auto">{date}</Col>
+                          <Col md="auto">
                             <img
                               src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/uncategorized/general@2x.png"
                               alt="receipt"
-                              style={{ height: "100px", width: "100px" }}
+                              style={{ height: "45px", width: "45px" }}
                             />
                           </Col>
-                          <Col md={5}>
-                            <Row>
-                              <p>{groupDetails[idx].description}</p>
-                            </Row>
-                            <Row>
-                              <h5>
-                                <b>
-                                  {currencyType}
-                                  {' '}
-                                  {numeral(groupDetails[idx].totalAmount).format('0,0.00')}
-                                </b>
-                              </h5>
-                            </Row>
-                            <Row>
-                              <p>
-                                Added by
-                                {' '}
-                                {ownerName}
-                                {' '}
-                                on
-                                {' '}
-                                {date}
-                              </p>
-                            </Row>
-
+                          <Col>
+                            <h6>
+                              <b>{groupDetails[idx].description}</b>
+                            </h6>
                           </Col>
+                          <Col md={3} />
+                          <Col>{payedStr}</Col>
+                          <Col>{lentString}</Col>
                         </Row>
+                      </Accordion.Toggle>
+                      <Accordion.Collapse eventKey={eventKey}>
+                        <Card.Body>
+                          {/* {this.state.TransactionStr} */}
 
-                        {
-                          Object.values(transactionData).map((item) => {
+                          {/* <div>{payedStr}</div> */}
+                          <Row>
+                            <Col md={2}>
+                              <img
+                                src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/uncategorized/general@2x.png"
+                                alt="receipt"
+                                style={{ height: "100px", width: "100px" }}
+                              />
+                            </Col>
+                            <Col md={5}>
+                              <Row>
+                                <p>{groupDetails[idx].description}</p>
+                              </Row>
+                              <Row>
+                                <h5>
+                                  <b>
+                                    {currencyType}
+                                    {" "}
+                                    {numeral(
+                                      groupDetails[idx].totalAmount,
+                                    ).format("0,0.00")}
+                                  </b>
+                                </h5>
+                              </Row>
+                              <Row>
+                                <p>
+                                  Added by
+                                  {' '}
+                                  {ownerName}
+                                  {' '}
+                                  on
+                                  {' '}
+                                  {date}
+                                </p>
+                              </Row>
+                            </Col>
+                          </Row>
+
+                          {Object.values(transactionData).map((item) => {
                             if (item.defaulter._id != item.owner._id) {
                               let status = "";
 
@@ -517,26 +644,25 @@ class GroupsContainer extends Component {
                                   <b>{item.defaulter.userName}</b>
                                   {' '}
                                   {status}
-                                  {' '}
+                                  {" "}
                                   <b>
                                     {currencyType}
-                                    {' '}
-                                    {numeral(item.splitAmount).format('0,0.00')}
+                                    {" "}
+                                    {numeral(item.splitAmount).format("0,0.00")}
                                   </b>
                                 </div>
                               );
                             }
-                          })
-}
-                        <Row style={{ marginTop: "30px" }}>
-                          {/* <Col md={8} /> */}
-                          <Col md="auto">
-                            <span className="glyphicon glyphicon-th-list" />
-                            <b> Notes and comments</b>
-                          </Col>
-                        </Row>
-                        {
-                            Object.values(groupDetails[idx].notes).map((note) => {
+                          })}
+                          <Row style={{ marginTop: "30px" }}>
+                            {/* <Col md={8} /> */}
+                            <Col md="auto">
+                              <span className="glyphicon glyphicon-th-list" />
+                              <b> Notes and comments</b>
+                            </Col>
+                          </Row>
+                          {Object.values(groupDetails[idx].notes).map(
+                            (note) => {
                               const notesDate = note.addedOn.slice(0, 10);
                               const notesStr = `${note.addedUser} ${notesDate} \n${note.note}`;
                               let transactionID = 0;
@@ -544,70 +670,101 @@ class GroupsContainer extends Component {
                                 <Form.Row style={{ marginTop: "5px" }}>
                                   {/* <Col md={} /> */}
                                   <Col md="auto">
-                                    <Form.Group as={Col} md="auto" style={{ display: "flex" }} id={note._id}>
-                                      <Form.Control as="textarea" id={note._id} required type="text" value={notesStr} style={{ width: "400px" }} readOnly />
+                                    <Form.Group
+                                      as={Col}
+                                      md="auto"
+                                      style={{ display: "flex" }}
+                                      id={note._id}
+                                    >
+                                      <Form.Control
+                                        as="textarea"
+                                        id={note._id}
+                                        required
+                                        type="text"
+                                        value={notesStr}
+                                        style={{ width: "400px" }}
+                                        readOnly
+                                      />
                                       <span
-                                        style={{ top: "10px", marginLeft: "10px" }}
+                                        style={{
+                                          top: "10px",
+                                          marginLeft: "10px",
+                                        }}
                                         // role="button"
                                         id={note._id}
                                         className="glyphicon glyphicon-remove-circle"
                                         onClick={
-                                      // (e) => this.onDeleteClicked(noteID = noteID, transactionID = groupDetails[idx]._id)
-                                      (e) => {
-                                        swal({
-                                          title: "Are you sure?",
-                                          text: "Once deleted, you will not be able to recover this note !",
-                                          icon: "warning",
-                                          buttons: true,
-                                          dangerMode: true,
-                                        })
-                                          .then((willDelete) => {
-                                            if (willDelete) {
-                                              this.onDeleteClicked(note._id, transactionID = groupDetails[idx]._id);
-                                              swal("Your notes has been deleted!", {
-                                                icon: "success",
-                                              });
-                                            }
-                                          });
-                                      }
-}
+                                          // (e) => this.onDeleteClicked(noteID = noteID, transactionID = groupDetails[idx]._id)
+                                          (e) => {
+                                            swal({
+                                              title: "Are you sure?",
+                                              text:
+                                                "Once deleted, you will not be able to recover this note !",
+                                              icon: "warning",
+                                              buttons: true,
+                                              dangerMode: true,
+                                            }).then((willDelete) => {
+                                              if (willDelete) {
+                                                this.onDeleteClicked(
+                                                  note._id,
+                                                  (transactionID = groupDetails[idx]._id),
+                                                );
+                                                swal(
+                                                  "Your notes has been deleted!",
+                                                  {
+                                                    icon: "success",
+                                                  },
+                                                );
+                                              }
+                                            });
+                                          }
+                                        }
                                       />
                                     </Form.Group>
                                   </Col>
                                 </Form.Row>
                               );
-                            })
-                          }
-                        <Form>
-                          <Form.Row>
-                            {/* <Col md={8} /> */}
-                            <Col md="auto">
-                              <Form.Group as={Col} md="auto" controlId="validationCustom01">
-                                <Form.Control as="textarea" required type="text" onChange={this.onNotesChange} value={this.state.note} style={{ width: "400px" }} />
-                                <Button
-                                  style={{
-                                    marginTop: "10px",
-                                  }}
-                                  onClick={
-                                    (e) => this.onPostClicked(transactionData[0].transactionID)
-                                  }
+                            },
+                          )}
+                          <Form>
+                            <Form.Row>
+                              {/* <Col md={8} /> */}
+                              <Col md="auto">
+                                <Form.Group
+                                  as={Col}
+                                  md="auto"
+                                  controlId="validationCustom01"
                                 >
-                                  Post
-
-                                </Button>
-                              </Form.Group>
-                            </Col>
-                          </Form.Row>
-                        </Form>
-                      </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                // </Accordion>
-                );
-              })
-}
+                                  <Form.Control
+                                    as="textarea"
+                                    required
+                                    type="text"
+                                    onChange={this.onNotesChange}
+                                    value={this.state.note}
+                                    style={{ width: "400px" }}
+                                  />
+                                  <Button
+                                    style={{
+                                      marginTop: "10px",
+                                    }}
+                                    onClick={(e) => this.onPostClicked(
+                                      transactionData[0].transactionID,
+                                    )}
+                                  >
+                                    Post
+                                  </Button>
+                                </Form.Group>
+                              </Col>
+                            </Form.Row>
+                          </Form>
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                    // </Accordion>
+                  );
+                })}
               </Accordion>
-              )}
+            )}
           </Col>
         </Row>
       </Container>
@@ -615,7 +772,10 @@ class GroupsContainer extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({ userDetails: state.userReducer });
+const mapStateToProps = (state) => ({
+  userDetails: state.userReducer,
+  groupDetails: state.groupsReducer.activeGroupDetails,
+});
 
 function mapDispatchToProps(dispatch) {
   console.log("in dispatch");

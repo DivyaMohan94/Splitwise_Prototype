@@ -97,6 +97,7 @@ class Profile extends Component {
               // axios.defaults.headers.common.authorization = localStorage.getItem('token');
               axios.post(`${URL_VAL}/profile/getImage/${response.data.image}`)
                 .then((res) => {
+                  console.log('image res', res);
                   const imagePreview = `data:image/jpg;base64, ${res.data}`;
                   this.setState({
                     imagePreview,
@@ -118,7 +119,7 @@ class Profile extends Component {
       console.log(target.files);
       const profilePhoto = target.files[0];
       const data = new FormData();
-      data.append('photos', profilePhoto);
+      data.append('image', profilePhoto);
       // axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios.post(`${URL_VAL}/profile/upload-file`, data)
         .then((response) => {
@@ -129,8 +130,9 @@ class Profile extends Component {
             // axios.defaults.headers.common.authorization = localStorage.getItem('token');
             axios.post(`${URL_VAL}/profile/getImage/${profilePhoto.name}`)
               .then((res) => {
+                console.log('image res', res);
                 const imagePreview = `data:image/jpg;base64, ${res.data}`;
-                console.log(imagePreview);
+                console.log('img', imagePreview);
                 this.setState({
                   image: profilePhoto.name,
                   imagePreview,
@@ -436,6 +438,7 @@ class Profile extends Component {
                     id="avatar"
                     name="ProfileImage"
                     type="file"
+                    accept="image/*"
                     style={{ maxWidth: "230px", marginTop: "10px" }}
                     onChange={this.handleChange}
                   />

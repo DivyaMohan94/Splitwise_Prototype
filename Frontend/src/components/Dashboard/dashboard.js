@@ -57,6 +57,7 @@ class Dashboard extends Component {
     this.myGroupsLinkClicked = this.myGroupsLinkClicked.bind(this);
     this.update = this.update.bind(this);
     this.updateOnLeaveGroup = this.updateOnLeaveGroup.bind(this);
+    this.onGroupNameChange = this.onGroupNameChange.bind(this);
   }
 
   componentDidMount() {
@@ -252,6 +253,12 @@ class Dashboard extends Component {
     });
   }
 
+  onGroupNameChange() {
+    this.setState({
+      isUpdate: true,
+    });
+  }
+
   render() {
     let redirectVar = null;
     const { redirectTo } = this.state;
@@ -286,6 +293,7 @@ class Dashboard extends Component {
             key={selectedGroupID}
             groupID={selectedGroupID}
             groupName={selectedGroupName}
+            onGroupNameChange={this.onGroupNameChange}
           />
         );
         break;
