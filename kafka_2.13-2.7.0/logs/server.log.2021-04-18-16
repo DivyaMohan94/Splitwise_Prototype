@@ -1,0 +1,2 @@
+[2021-04-18 16:39:52,346] INFO Snapshotting: 0x2c972 to /tmp/zookeeper/version-2/snapshot.2c972 (org.apache.zookeeper.server.persistence.FileTxnSnapLog)
+[2021-04-18 16:39:52,547] INFO Creating new log file: log.2c974 (org.apache.zookeeper.server.persistence.FileTxnLog)

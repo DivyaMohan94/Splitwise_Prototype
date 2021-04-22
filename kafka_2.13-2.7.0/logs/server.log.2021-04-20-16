@@ -1,0 +1,2 @@
+[2021-04-20 16:18:58,110] INFO Snapshotting: 0x791ae to /tmp/zookeeper/version-2/snapshot.791ae (org.apache.zookeeper.server.persistence.FileTxnSnapLog)
+[2021-04-20 16:18:58,432] INFO Creating new log file: log.791b0 (org.apache.zookeeper.server.persistence.FileTxnLog)

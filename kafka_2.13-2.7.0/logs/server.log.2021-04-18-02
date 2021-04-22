@@ -1,0 +1,2 @@
+[2021-04-18 02:54:18,326] INFO Snapshotting: 0x14c32 to /tmp/zookeeper/version-2/snapshot.14c32 (org.apache.zookeeper.server.persistence.FileTxnSnapLog)
+[2021-04-18 02:54:18,824] INFO Creating new log file: log.14c34 (org.apache.zookeeper.server.persistence.FileTxnLog)
