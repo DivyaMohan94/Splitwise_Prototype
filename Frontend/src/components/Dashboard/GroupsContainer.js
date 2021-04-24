@@ -571,7 +571,7 @@ class GroupsContainer extends Component {
 
                   let ownerName = "";
                   if (
-                    groupDetails[idx].createdBy == groupDetails[idx].user._id
+                    groupDetails[idx].createdBy == localStorage.getItem('userID')
                   ) {
                     ownerName = "you";
                   } else {
