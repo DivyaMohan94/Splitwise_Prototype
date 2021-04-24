@@ -1,2 +1,0 @@
-[2021-04-16 17:13:16,916] INFO Snapshotting: 0x137b4 to /tmp/zookeeper/version-2/snapshot.137b4 (org.apache.zookeeper.server.persistence.FileTxnSnapLog)
-[2021-04-16 17:13:17,142] INFO Creating new log file: log.137b6 (org.apache.zookeeper.server.persistence.FileTxnLog)

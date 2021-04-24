@@ -1,2 +1,0 @@
-[2021-04-19 18:31:03,836] INFO Snapshotting: 0x601ce to /tmp/zookeeper/version-2/snapshot.601ce (org.apache.zookeeper.server.persistence.FileTxnSnapLog)
-[2021-04-19 18:31:04,086] INFO Creating new log file: log.601d0 (org.apache.zookeeper.server.persistence.FileTxnLog)

@@ -1,2 +1,0 @@
-[2021-04-19 11:31:18,468] INFO Snapshotting: 0x4fa20 to /tmp/zookeeper/version-2/snapshot.4fa20 (org.apache.zookeeper.server.persistence.FileTxnSnapLog)
-[2021-04-19 11:31:19,433] INFO Creating new log file: log.4fa22 (org.apache.zookeeper.server.persistence.FileTxnLog)

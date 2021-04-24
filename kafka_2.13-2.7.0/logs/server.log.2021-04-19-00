@@ -1,2 +1,0 @@
-[2021-04-19 00:22:06,513] INFO Snapshotting: 0x3abcb to /tmp/zookeeper/version-2/snapshot.3abcb (org.apache.zookeeper.server.persistence.FileTxnSnapLog)
-[2021-04-19 00:22:07,044] INFO Creating new log file: log.3abcd (org.apache.zookeeper.server.persistence.FileTxnLog)
