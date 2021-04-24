@@ -24,7 +24,7 @@ const handle_request = async (msg, callback) => {
       console.log("Cannot fetch transaction details");
       callback(error, null);
     } else {
-      console.log("Fetching result", data);
+      console.log("Fetching result");
       callback(null, data);
     }
   });

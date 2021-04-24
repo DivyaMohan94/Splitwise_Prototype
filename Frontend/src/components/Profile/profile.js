@@ -62,7 +62,7 @@ class Profile extends Component {
 
   componentDidMount() {
     console.log("inside did mount of profile page");
-    const data = this.props.userID;
+    const data = localStorage.getItem('userID');
     if (data === "" || data === undefined) {
       this.handleLogout();
     } else {

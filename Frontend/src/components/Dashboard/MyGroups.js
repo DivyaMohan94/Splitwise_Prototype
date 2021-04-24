@@ -297,7 +297,7 @@ class MyGroups extends Component {
                 <ListGroup variant="flush">
                   <ListGroup.Item>
                     <Row>
-                      <Col md={3}>
+                      <Col md={4}>
                         <span>
                           <img
                             src="https://s3.amazonaws.com/splitwise/uploads/notifications/v2/4.png"
@@ -353,7 +353,7 @@ class MyGroups extends Component {
                 <ListGroup variant="flush">
                   <ListGroup.Item>
                     <Row>
-                      <Col md={3}>
+                      <Col md={4}>
                         <span>
                           <img
                             src="https://s3.amazonaws.com/splitwise/uploads/notifications/v2/4.png"

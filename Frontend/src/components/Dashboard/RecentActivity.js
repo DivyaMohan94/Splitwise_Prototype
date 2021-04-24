@@ -430,7 +430,7 @@ class RecentActivity extends Component {
         {isDataPresent
         && (
         <Row style={{ marginTop: '20px' }}>
-          <Col md="6" />
+          <Col md="4" />
           <Col md="auto" style={{ marginTop: '12px' }}>
             <Form.Control as="select" onChange={this.onPageSizeChanged} style={{ width: '100px' }}>
               <option id="1">2</option>

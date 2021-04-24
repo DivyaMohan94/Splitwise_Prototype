@@ -31,7 +31,7 @@ const handle_request = async (msg, callback) => {
         console.log("Cannot add notes", error);
         callback(error, null);
       } else {
-        console.log("Notes added successfully");
+        console.log("Notes added successfully", notesObj);
         callback(null, data);
       }
     },
