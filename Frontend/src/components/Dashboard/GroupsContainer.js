@@ -176,6 +176,31 @@ class GroupsContainer extends Component {
   }
 
   OnTransactionClick(transactionID) {
+    const { userID } = this.state;
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
+    axios
+      .get(`${URL_VAL}/group/AllTransaction`, {
+        params: {
+          groupID: this.props.groupID,
+        },
+      })
+      .then((response) => {
+        console.log("Status Code : ", response.status);
+        console.log("Status Code : ", response.data);
+        if (response.status === 200) {
+          console.log(response.data);
+          if (response.data.length) {
+            this.setState({
+              isDataPresent: true,
+              groupDetails: response.data,
+              userID,
+              isGroupUpdated: false,
+            });
+          }
+        }
+        this.props.getTransactionData(response.data);
+      });
+
     axios.defaults.headers.common.authorization = localStorage.getItem('token');
     axios
       .get(`${URL_VAL}/group/Transaction`, {
@@ -615,7 +640,20 @@ class GroupsContainer extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({ userDetails: state.userReducer });
+const mapStateToProps = (state) => {
+  if (state.userReducer != undefined && state.groupsReducer.expenseDetails != undefined) {
+    return {
+      userDetails: state.userReducer,
+      groupDetails: state.groupsReducer.activeGroupDetails,
+      groupNotes: state.groupsReducer.expenseDetails,
+    };
+  }
+  return {
+    userDetails: "",
+    groupDetails: "",
+    groupNotes: [],
+  };
+};
 
 function mapDispatchToProps(dispatch) {
   console.log("in dispatch");

@@ -194,7 +194,7 @@ class AddExpense extends Component {
                       <Form.Label>{this.props.userDetails.currency}</Form.Label>
                     </Col>
                     <Col md={6}>
-                      <Form.Control placeholder="Amount" onChange={this.onAmountChange} value={this.state.amount} required />
+                      <Form.Control placeholder="Amount" onChange={this.onAmountChange} required />
                     </Col>
                   </Form.Row>
                 </Col>

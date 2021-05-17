@@ -61,7 +61,7 @@ class Profile extends Component {
 
   componentDidMount() {
     console.log("inside did mount of profile page");
-    const data = this.props.userID;
+    const data = localStorage.getItem('userID');
     if (data === "" || data === undefined) {
       this.handleLogout();
     } else {
@@ -118,7 +118,7 @@ class Profile extends Component {
       console.log(target.files);
       const profilePhoto = target.files[0];
       const data = new FormData();
-      data.append('photos', profilePhoto);
+      data.append('image', profilePhoto);
       // axios.defaults.headers.common.authorization = localStorage.getItem('token');
       axios.post(`${URL_VAL}/profile/upload-file`, data)
         .then((response) => {
@@ -564,17 +564,31 @@ class Profile extends Component {
 const mapStateToProps = (state, ownProps) => {
   console.log("Accessing store:", state);
   // console.log("ownprops:", ownProps);
+  if (state.userReducer != undefined) {
+    return {
+      userID: state.userReducer._id,
+      emailID: state.userReducer.emailID,
+      userName: state.userReducer.userName,
+      currency: state.userReducer.currency,
+      phoneNum: state.userReducer.phoneNum,
+      countryCode: state.userReducer.countryCode,
+      timeZone: state.userReducer.timeZone,
+      createdAt: state.userReducer.createdAt,
+      language: state.userReducer.language,
+      image: state.userReducer.image,
+    };
+  }
   return {
-    userID: state.userReducer._id,
-    emailID: state.userReducer.emailID,
-    userName: state.userReducer.userName,
-    currency: state.userReducer.currency,
-    phoneNum: state.userReducer.phoneNum,
-    countryCode: state.userReducer.countryCode,
-    timeZone: state.userReducer.timeZone,
-    createdAt: state.userReducer.createdAt,
-    language: state.userReducer.language,
-    image: state.userReducer.image,
+    userID: -1,
+    emailID: "",
+    userName: "",
+    currency: "",
+    phoneNum: "",
+    countryCode: "",
+    timeZone: "",
+    createdAt: "",
+    language: "",
+    image: "",
   };
 };
 // export default Profile;

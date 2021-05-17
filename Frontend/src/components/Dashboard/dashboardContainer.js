@@ -308,7 +308,7 @@ class DashboardContainer extends Component {
           backgroundColor: "#eee", height: "120px", textAlign: 'center', justifyContent: "center", borderBottom: "1px", borderBottomColor: "#ddd", padding: "20px", borderColor: "#ddd",
         }}
         >
-          <Table bordered fluid>
+          <Table bordered fluid="true">
             <thead>
               <tr>
                 <th>
