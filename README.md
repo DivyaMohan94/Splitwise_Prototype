@@ -1,4 +1,4 @@
-# Splitwise_lab2
+# Splitwise_Prototype
 
 <b>Steps to deploy the application:</b>
 
